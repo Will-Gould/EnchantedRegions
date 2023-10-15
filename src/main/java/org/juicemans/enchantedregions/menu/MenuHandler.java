@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.juicemans.enchantedregions.EnchantedRegions;
 import org.juicemans.enchantedregions.EnchantedRegionManager;
 import org.juicemans.enchantedregions.beans.EnchantedRegion;
+import org.juicemans.enchantedregions.menu.menus.RegionCreation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,10 +24,10 @@ public class MenuHandler {
     private final HashMap<String, Menu> menus;
     private final EnchantedRegionManager regionManager;
 
-    public MenuHandler(EnchantedRegions plugin){
+    public MenuHandler(EnchantedRegions plugin, EnchantedRegionManager regionManager){
         this.plugin = plugin;
         this.menus = new HashMap<>();
-        this.regionManager = plugin.getRegionManager();
+        this.regionManager = regionManager;
         loadMenus();
     }
 
@@ -56,21 +57,25 @@ public class MenuHandler {
 
         //Check if player is creating something
         if(regionManager.isCreatingRegion(player) && i.disableWhenCreating()){
+            this.plugin.getLogger().info("Player is creating something");
             return;
         }
 
         //Check if player is editing region
         if(regionManager.isEditingRegion(player) && i.disableWhenEditing()){
+            this.plugin.getLogger().info("Player is editing region");
             return;
         }
 
         //Check for enchanting table
-        if(false){
-
+        if(location == null && i.needsTable()){
+            this.plugin.getLogger().info("Player needs table");
+            return;
         }
 
         //Check for region
         if(region == null && i.needsRegion()){
+            this.plugin.getLogger().info("No region found");
             return;
         }
 
@@ -104,7 +109,7 @@ public class MenuHandler {
 
         //Now pass it over to the menu to handle menu items and display
         try{
-            m.display(this.regionManager.getContainer(), gui, player, region, location);
+            m.display(this, this.regionManager, gui, player, region, location);
         }catch (Exception e){
             player.sendMessage(Component.text("There was an error opening this menu", NamedTextColor.RED));
         }
@@ -116,7 +121,7 @@ public class MenuHandler {
     }
 
     private void loadMenus() {
-
+        loadMenu(RegionCreation.class);
     }
 
     private void loadMenu(Class<? extends Menu> m){
