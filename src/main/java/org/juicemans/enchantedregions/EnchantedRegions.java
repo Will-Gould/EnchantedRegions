@@ -9,12 +9,14 @@ public final class EnchantedRegions extends JavaPlugin {
 
     private RegionContainer container;
     private MenuHandler menuHandler;
+    private RegionManager regionManager;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
-        this.container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         this.menuHandler = new MenuHandler(this);
+        this.regionManager = new RegionManager(this);
+
     }
 
     @Override
@@ -22,11 +24,12 @@ public final class EnchantedRegions extends JavaPlugin {
         // Plugin shutdown logic
     }
 
-    public RegionContainer getRegionContainer() {
-        return this.container;
-    }
-
     public MenuHandler getMenuHandler(){
         return this.menuHandler;
     }
+
+    public RegionManager getRegionManager() {
+        return this.regionManager;
+    }
+
 }

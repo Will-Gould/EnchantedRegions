@@ -15,6 +15,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockVector;
 import org.juicemans.enchantedregions.EnchantedRegions;
+import org.juicemans.enchantedregions.RegionManager;
+import org.juicemans.enchantedregions.beans.EnchantedRegion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,26 +27,26 @@ public class MenuHandler {
 
     private final EnchantedRegions plugin;
     private final HashMap<String, Menu> menus;
-    private final RegionContainer container;
+    private final RegionManager regionManager;
 
     public MenuHandler(EnchantedRegions plugin){
         this.plugin = plugin;
         this.menus = new HashMap<>();
-        this.container = plugin.getRegionContainer();
+        this.regionManager = plugin.getRegionManager();
         loadMenus();
     }
 
     public void openMenu(String menuName, Player player, Location location){
         Menu m = getMenu(menuName);
-        RegionQuery query = container.createQuery();
+        RegionQuery query = this.regionManager.getRegionContainer().createQuery();
         ApplicableRegionSet set = query.getApplicableRegions(location);
         ArrayList<ProtectedRegion> regions = Lists.newArrayList(set);
-        ProtectedCuboidRegion region = null;
+        EnchantedRegion region = null;
         if(regions.isEmpty()){
             this.plugin.getLogger().info("No applicable regions");
         }else{
-            if(regions.get(0) instanceof ProtectedCuboidRegion){
-                region = (ProtectedCuboidRegion) regions.get(0);
+            if(regions.get(0) instanceof EnchantedRegion){
+                region = (EnchantedRegion) regions.get(0);
             }
         }
         if(regions.size() > 1){
@@ -59,10 +61,19 @@ public class MenuHandler {
         MenuInfo i = m.getClass().getAnnotation(MenuInfo.class);
 
         //Check if player is creating something
+        if(regionManager.isCreatingRegion(player) && i.disableWhenCreating()){
+            return;
+        }
 
         //Check if player is editing region
+        if(regionManager.isEditingRegion(player) && i.disableWhenEditing()){
+            return;
+        }
 
         //Check for enchanting table
+        if(false){
+
+        }
 
         //Check for region
         if(region == null && i.needsRegion()){
@@ -99,7 +110,7 @@ public class MenuHandler {
 
         //Now pass it over to the menu to handle menu items and display
         try{
-            m.display(this.container, gui, player, region, location);
+            m.display(this.regionManager.getRegionContainer(), gui, player, region, location);
         }catch (Exception e){
             player.sendMessage(Component.text("There was an error opening this menu", NamedTextColor.RED));
         }

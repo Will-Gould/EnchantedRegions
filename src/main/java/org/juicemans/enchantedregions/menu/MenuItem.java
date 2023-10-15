@@ -6,7 +6,10 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public interface MenuItem {
 
@@ -14,4 +17,5 @@ public interface MenuItem {
 
     public GuiItem getDisabledItem();
 
+    public List<Component> getLore();
 }
