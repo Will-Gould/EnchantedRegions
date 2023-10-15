@@ -14,8 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CreateRegion implements MenuItem {
+
     @Override
-    public GuiItem getMenuItem(MenuHandler menuHandler, RegionContainer container, Gui gui, Player player, ProtectedCuboidRegion region, Location table) {
+    public GuiItem getMenuItem(MenuHandler menuHandler, RegionContainer container, Gui gui, Player player, ProtectedCuboidRegion region, org.bukkit.Location table) {
         return null;
     }
 

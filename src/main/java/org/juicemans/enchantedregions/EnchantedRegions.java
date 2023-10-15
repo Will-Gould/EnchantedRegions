@@ -1,6 +1,5 @@
 package org.juicemans.enchantedregions;
 
-import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.juicemans.enchantedregions.menu.MenuHandler;
@@ -9,13 +8,13 @@ public final class EnchantedRegions extends JavaPlugin {
 
     private RegionContainer container;
     private MenuHandler menuHandler;
-    private RegionManager regionManager;
+    private EnchantedRegionManager regionManager;
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         this.menuHandler = new MenuHandler(this);
-        this.regionManager = new RegionManager(this);
+        this.regionManager = new EnchantedRegionManager(this);
 
     }
 
@@ -28,7 +27,7 @@ public final class EnchantedRegions extends JavaPlugin {
         return this.menuHandler;
     }
 
-    public RegionManager getRegionManager() {
+    public EnchantedRegionManager getRegionManager() {
         return this.regionManager;
     }
 

@@ -1,33 +1,27 @@
 package org.juicemans.enchantedregions.menu;
 
 import com.google.common.collect.Lists;
-import com.sk89q.worldedit.util.Location;
-import com.sk89q.worldedit.world.World;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
-import com.sk89q.worldguard.protection.RegionResultSet;
-import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import dev.triumphteam.gui.guis.Gui;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.util.BlockVector;
 import org.juicemans.enchantedregions.EnchantedRegions;
-import org.juicemans.enchantedregions.RegionManager;
+import org.juicemans.enchantedregions.EnchantedRegionManager;
 import org.juicemans.enchantedregions.beans.EnchantedRegion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MenuHandler {
 
     private final EnchantedRegions plugin;
     private final HashMap<String, Menu> menus;
-    private final RegionManager regionManager;
+    private final EnchantedRegionManager regionManager;
 
     public MenuHandler(EnchantedRegions plugin){
         this.plugin = plugin;
@@ -38,8 +32,8 @@ public class MenuHandler {
 
     public void openMenu(String menuName, Player player, Location location){
         Menu m = getMenu(menuName);
-        RegionQuery query = this.regionManager.getRegionContainer().createQuery();
-        ApplicableRegionSet set = query.getApplicableRegions(location);
+        RegionQuery query = this.regionManager.getContainer().createQuery();
+        ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(location));
         ArrayList<ProtectedRegion> regions = Lists.newArrayList(set);
         EnchantedRegion region = null;
         if(regions.isEmpty()){
@@ -110,7 +104,7 @@ public class MenuHandler {
 
         //Now pass it over to the menu to handle menu items and display
         try{
-            m.display(this.regionManager.getRegionContainer(), gui, player, region, location);
+            m.display(this.regionManager.getContainer(), gui, player, region, location);
         }catch (Exception e){
             player.sendMessage(Component.text("There was an error opening this menu", NamedTextColor.RED));
         }

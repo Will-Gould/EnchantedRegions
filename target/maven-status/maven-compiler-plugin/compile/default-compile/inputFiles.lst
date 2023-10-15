@@ -1,6 +1,11 @@
-/Users/will/IdeaProjects/EnchantedRegions/src/main/java/org/juicemans/enchantedregions/menu/Menu.java
-/Users/will/IdeaProjects/EnchantedRegions/src/main/java/org/juicemans/enchantedregions/menu/MenuInfo.java
-/Users/will/IdeaProjects/EnchantedRegions/src/main/java/org/juicemans/enchantedregions/menu/MenuHandler.java
-/Users/will/IdeaProjects/EnchantedRegions/src/main/java/org/juicemans/enchantedregions/menu/MenuInteraction.java
-/Users/will/IdeaProjects/EnchantedRegions/src/main/java/org/juicemans/enchantedregions/menu/MenuItem.java
-/Users/will/IdeaProjects/EnchantedRegions/src/main/java/org/juicemans/enchantedregions/EnchantedRegions.java
+C:\Users\willg\IdeaProjects\EnchantedRegions\src\main\java\org\juicemans\enchantedregions\beans\EnchantedRegion.java
+C:\Users\willg\IdeaProjects\EnchantedRegions\src\main\java\org\juicemans\enchantedregions\menu\MenuItem.java
+C:\Users\willg\IdeaProjects\EnchantedRegions\src\main\java\org\juicemans\enchantedregions\menu\menuitems\CreateRegion.java
+C:\Users\willg\IdeaProjects\EnchantedRegions\src\main\java\org\juicemans\enchantedregions\EnchantedRegionManager.java
+C:\Users\willg\IdeaProjects\EnchantedRegions\src\main\java\org\juicemans\enchantedregions\menu\MenuInfo.java
+C:\Users\willg\IdeaProjects\EnchantedRegions\src\main\java\org\juicemans\enchantedregions\menu\MenuInteraction.java
+C:\Users\willg\IdeaProjects\EnchantedRegions\src\main\java\org\juicemans\enchantedregions\beans\CreationPlayer.java
+C:\Users\willg\IdeaProjects\EnchantedRegions\src\main\java\org\juicemans\enchantedregions\menu\MenuHandler.java
+C:\Users\willg\IdeaProjects\EnchantedRegions\src\main\java\org\juicemans\enchantedregions\beans\EditPlayer.java
+C:\Users\willg\IdeaProjects\EnchantedRegions\src\main\java\org\juicemans\enchantedregions\EnchantedRegions.java
+C:\Users\willg\IdeaProjects\EnchantedRegions\src\main\java\org\juicemans\enchantedregions\menu\Menu.java

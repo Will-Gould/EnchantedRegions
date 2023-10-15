@@ -1,7 +1,8 @@
 package org.juicemans.enchantedregions.beans;
 
-import com.sk89q.worldedit.util.Location;
-import com.sk89q.worldedit.world.World;
+
+import org.bukkit.Location;
+import org.bukkit.World;
 
 public class CreationPlayer {
 
