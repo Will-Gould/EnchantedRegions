@@ -3,6 +3,7 @@ package org.juicemans.enchantedregions;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
@@ -40,6 +41,7 @@ public class EnchantedRegionManager {
         String id = UUID.randomUUID().toString();
         this.plugin.getLogger().info("Region id: " + id);
         EnchantedRegion er = new EnchantedRegion(id, "Juice Zone", world, b1, b2, table);
+        er.setOwners(new DefaultDomain());
         assert world != null;
         RegionManager regionManager = this.container.get(BukkitAdapter.adapt(world));
         assert regionManager != null;
@@ -58,12 +60,20 @@ public class EnchantedRegionManager {
         this.creationPlayers.putIfAbsent(id, cp);
     }
 
+    public CreationPlayer getCreationPlayer(UUID id){
+        return this.creationPlayers.get(id);
+    }
+
     public boolean isCreatingRegion(Player p){
         return this.creationPlayers.containsKey(p.getUniqueId());
     }
 
     public void addEditPlayer(UUID id, EditPlayer ep){
         this.editPlayers.putIfAbsent(id, ep);
+    }
+
+    public EditPlayer getEditPlayer(UUID id){
+        return this.editPlayers.get(id);
     }
 
     public boolean isEditingRegion(Player p){
@@ -121,7 +131,29 @@ public class EnchantedRegionManager {
         return null;
     }
 
+    public boolean isTableBeingUsedForCreation(Location l){
+        for(CreationPlayer cp : this.creationPlayers.values()){
+            if(cp.getEnchantingTable().distance(l) == 0){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public CreationPlayer getCreationPlayerFromTable(Location l){
+        for(CreationPlayer cp : this.creationPlayers.values()){
+            if(cp.getEnchantingTable().distance(l) == 0){
+                return cp;
+            }
+        }
+        return null;
+    }
+
     public RegionContainer getContainer(){
         return this.container;
+    }
+
+    public EnchantedRegions getPlugin(){
+        return this.plugin;
     }
 }
