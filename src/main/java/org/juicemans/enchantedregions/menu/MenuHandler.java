@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.juicemans.enchantedregions.EnchantedRegions;
 import org.juicemans.enchantedregions.EnchantedRegionManager;
+import org.juicemans.enchantedregions.Util;
 import org.juicemans.enchantedregions.beans.EnchantedRegion;
 import org.juicemans.enchantedregions.menu.menus.RegionCreation;
 
@@ -36,6 +37,7 @@ public class MenuHandler {
         RegionQuery query = this.regionManager.getContainer().createQuery();
         ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(location));
         ArrayList<ProtectedRegion> regions = Lists.newArrayList(set);
+        regions.removeIf(r -> !(r instanceof EnchantedRegion));
         EnchantedRegion region = null;
         if(regions.isEmpty()){
             this.plugin.getLogger().info("No applicable regions");
@@ -46,6 +48,10 @@ public class MenuHandler {
         }
         if(regions.size() > 1){
             this.plugin.getLogger().info("More than 1 applicable region");
+            this.plugin.getLogger().info("Regions:");
+            for(ProtectedRegion pr : regions){
+                this.plugin.getLogger().info(" - " + pr.getId());
+            }
             return;
         }
 
