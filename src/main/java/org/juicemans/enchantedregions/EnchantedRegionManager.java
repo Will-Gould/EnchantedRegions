@@ -149,11 +149,11 @@ public class EnchantedRegionManager {
     }
 
     public boolean isValidRegionSelection(CreationPlayer creationPlayer){
-        if(creationPlayer.getL1() == null || creationPlayer.getL2() == null){
+        if(creationPlayer.getCornerOne() == null || creationPlayer.getCornerTwo() == null){
             return false;
         }
-        Location l1 = creationPlayer.getL1();
-        Location l2 = creationPlayer.getL2();
+        Location l1 = creationPlayer.getCornerOne();
+        Location l2 = creationPlayer.getCornerTwo();
 
         RegionManager rm = this.container.get(BukkitAdapter.adapt(creationPlayer.getEnchantingTable().getWorld()));
         if(rm == null){
@@ -174,9 +174,9 @@ public class EnchantedRegionManager {
             //Skip the region the player is working on
             if(cp.equals(creationPlayer)) continue;
             //Skip if the creation player is yet to set both points
-            if(cp.getL1() == null || cp.getL2() == null) continue;
+            if(cp.getCornerOne() == null || cp.getCornerTwo() == null) continue;
             //Check for overlap
-            if(Util.regionIntersects(l1, l2, cp.getL1(), cp.getL2())){
+            if(Util.regionIntersects(l1, l2, cp.getCornerOne(), cp.getCornerTwo())){
                 return false;
             }
         }

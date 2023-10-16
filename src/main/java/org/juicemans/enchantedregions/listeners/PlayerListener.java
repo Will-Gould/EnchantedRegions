@@ -25,6 +25,7 @@ public class PlayerListener implements Listener {
             Location loc = event.getClickedBlock() == null ? p.getLocation() : event.getClickedBlock().getLocation();
             EnchantedRegionManager rm = this.plugin.getRegionManager();
 
+            //Handle enchanting table interaction
             if(event.getClickedBlock().getBlockData().getMaterial() == Material.ENCHANTING_TABLE){
                 if(rm.isRegionEnchantingTable(loc)){
                     //TODO open region management menu
@@ -32,6 +33,9 @@ public class PlayerListener implements Listener {
                 }
                 this.plugin.getMenuHandler().openMenu("regionCreation", p, loc);
             }
+
+            //Handle point selection
+
         }
     }
 

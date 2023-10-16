@@ -15,6 +15,8 @@ import org.juicemans.enchantedregions.menu.Menu;
 import org.juicemans.enchantedregions.menu.MenuHandler;
 import org.juicemans.enchantedregions.menu.MenuInfo;
 import org.juicemans.enchantedregions.menu.MenuInteraction;
+import org.juicemans.enchantedregions.menu.menuitems.AddPrimaryPoint;
+import org.juicemans.enchantedregions.menu.menuitems.AddSecondaryPoint;
 import org.juicemans.enchantedregions.menu.menuitems.CreateRegion;
 
 @MenuInfo(
@@ -72,6 +74,8 @@ public class RegionCreation extends Menu {
 
     @Override
     protected void loadMenuItems() {
+        loadMenuItem(AddPrimaryPoint.class, 0);
+        loadMenuItem(AddSecondaryPoint.class, 9);
         loadMenuItem(CreateRegion.class, 18);
     }
 }

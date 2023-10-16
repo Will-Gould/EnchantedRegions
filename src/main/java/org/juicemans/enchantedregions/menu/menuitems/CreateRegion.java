@@ -34,7 +34,7 @@ public class CreateRegion implements MenuItem {
 
         return ItemBuilder.from(Material.BOOK)
                 .name(Component.text("Create New Region"))
-                .lore(getLore())
+                .lore(getLore(null))
                 .asGuiItem(event -> {
                     try{
                         execute(regionManager, player, table);
@@ -72,12 +72,13 @@ public class CreateRegion implements MenuItem {
     }
 
     @Override
-    public GuiItem getDisabledItem() {
+    public GuiItem getDisabledItem(Player p, CreationPlayer cp, Location table, String reason) {
         return null;
     }
 
+
     @Override
-    public List<Component> getLore() {
+    public List<Component> getLore(CreationPlayer cp) {
         ArrayList<Component> lore = new ArrayList<>();
         //lore.add(Component.text("Create new region"));
         return lore;

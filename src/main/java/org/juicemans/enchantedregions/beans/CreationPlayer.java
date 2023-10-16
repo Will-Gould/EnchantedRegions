@@ -44,7 +44,7 @@ public class CreationPlayer {
         return enchantingTable;
     }
 
-    public Location getL1() {
+    public Location getCornerOne() {
         return l1;
     }
 
@@ -54,7 +54,7 @@ public class CreationPlayer {
         }
     }
 
-    public Location getL2() {
+    public Location getCornerTwo() {
         return l2;
     }
 
