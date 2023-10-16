@@ -38,6 +38,10 @@ public class EnchantedRegionManager {
         this.creationPlayers.putIfAbsent(id, cp);
     }
 
+    public void removeCreationPlayer(Player p){
+        this.creationPlayers.remove(p.getUniqueId());
+    }
+
     public CreationPlayer getCreationPlayer(UUID id){
         return this.creationPlayers.get(id);
     }

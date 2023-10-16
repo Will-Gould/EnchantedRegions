@@ -1,6 +1,8 @@
 package org.juicemans.enchantedregions;
 
 import com.sk89q.worldedit.math.BlockVector3;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.juicemans.enchantedregions.beans.EnchantedRegion;
@@ -109,6 +111,16 @@ public class Util {
 
     public static BlockVector3 locationToBv(Location l){
         return BlockVector3.at(l.getBlockX(), l.getBlockY(), l.getBlockZ());
+    }
+
+    public static Component getPointMessage(Location l){
+
+        return Component.text("x=", NamedTextColor.GRAY)
+                .append(Component.text(l.getX(), NamedTextColor.BLUE))
+                .append(Component.text(" y=", NamedTextColor.GRAY))
+                .append(Component.text(l.getY(), NamedTextColor.BLUE))
+                .append(Component.text(" z=", NamedTextColor.GRAY))
+                .append(Component.text(l.getZ(), NamedTextColor.BLUE));
     }
 
 }
