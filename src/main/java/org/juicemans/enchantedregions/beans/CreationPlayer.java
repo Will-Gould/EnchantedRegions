@@ -45,7 +45,9 @@ public class CreationPlayer {
     }
 
     public void setL1(Location l1) {
-        this.l1 = l1;
+        if(l1.getWorld().equals(this.world)){
+            this.l1 = l1;
+        }
     }
 
     public Location getL2() {
@@ -53,7 +55,9 @@ public class CreationPlayer {
     }
 
     public void setL2(Location l2) {
-        this.l2 = l2;
+        if(l2.getWorld().equals(this.world)){
+            this.l2 = l2;
+        }
     }
 
     public Player getPlayer(){

@@ -5,6 +5,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.RegionResultSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
@@ -17,8 +18,7 @@ import org.juicemans.enchantedregions.beans.CreationPlayer;
 import org.juicemans.enchantedregions.beans.EditPlayer;
 import org.juicemans.enchantedregions.beans.EnchantedRegion;
 
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 public class EnchantedRegionManager {
 
@@ -32,28 +32,6 @@ public class EnchantedRegionManager {
         this.container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         this.creationPlayers = new HashMap<>();
         this.editPlayers = new HashMap<>();
-
-        //TODO remove
-        World world = Bukkit.getWorld("world");
-        BlockVector3 b1 = BlockVector3.at(-569, 68, 523);
-        BlockVector3 b2 = BlockVector3.at(-579, 65, 520);
-        Location table = new Location(world, -570, 66, 521);
-        String id = UUID.randomUUID().toString();
-        this.plugin.getLogger().info("Region id: " + id);
-        EnchantedRegion er = new EnchantedRegion(id, "Juice Zone", world, b1, b2, table);
-        er.setOwners(new DefaultDomain());
-        assert world != null;
-        RegionManager regionManager = this.container.get(BukkitAdapter.adapt(world));
-        assert regionManager != null;
-        regionManager.addRegion(er);
-
-        EnchantedRegion r = this.getRegionFromEnchantingTable(table);
-        if(r != null){
-           this.plugin.getLogger().info("Region name: '" + r.getName() + "' found from table location");
-        }else{
-            this.plugin.getLogger().info("No region found from table location");
-        }
-
     }
 
     public void addCreationPlayer(UUID id, CreationPlayer cp){
@@ -156,4 +134,51 @@ public class EnchantedRegionManager {
     public EnchantedRegions getPlugin(){
         return this.plugin;
     }
+
+    public boolean isInsideRegion(Location l, List<EnchantedRegion> regions){
+        for(EnchantedRegion r : regions){
+            if(Util.isInsideRegion(l, r)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isValidRegionSelection(CreationPlayer creationPlayer){
+        if(creationPlayer.getL1() == null || creationPlayer.getL2() == null){
+            return false;
+        }
+        Location l1 = creationPlayer.getL1();
+        Location l2 = creationPlayer.getL2();
+
+        RegionManager rm = this.container.get(BukkitAdapter.adapt(creationPlayer.getEnchantingTable().getWorld()));
+        if(rm == null){
+            this.plugin.getLogger().info("There was an error loading WorldGuard region manager for world: " + creationPlayer.getWorld().getName());
+            return false;
+        }
+
+        //Check currently loaded regions for an intersection
+        Map<String, ProtectedRegion> regions = rm.getRegions();
+        for(ProtectedRegion pr : regions.values()){
+            if(Util.regionIntersects(l1, l2, Util.bvToLocation(creationPlayer.getWorld(), pr.getMinimumPoint()), Util.bvToLocation(creationPlayer.getWorld(), pr.getMaximumPoint()))){
+                return false;
+            }
+        }
+
+        //Check if region intersects another region currently being created
+        for(CreationPlayer cp : this.creationPlayers.values()){
+            //Skip the region the player is working on
+            if(cp.equals(creationPlayer)) continue;
+            //Skip if the creation player is yet to set both points
+            if(cp.getL1() == null || cp.getL2() == null) continue;
+            //Check for overlap
+            if(Util.regionIntersects(l1, l2, cp.getL1(), cp.getL2())){
+                return false;
+            }
+        }
+
+        //Check if enchanting table is inside region
+        return Util.isInsideAB(creationPlayer.getEnchantingTable(), l1, l2);
+    }
+
 }
