@@ -4,6 +4,7 @@ package org.juicemans.enchantedregions.beans;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.juicemans.enchantedregions.Util;
 
 import java.util.UUID;
 
@@ -26,6 +27,10 @@ public class CreationPlayer {
         this.enchantingTable = enchantingTable;
         this.payment = 0;
         this.confirmed = false;
+    }
+
+    public String getRegionId() {
+        return regionId;
     }
 
     public World getWorld() {
@@ -85,5 +90,16 @@ public class CreationPlayer {
 
     public int getPaid(){
         return this.payment;
+    }
+
+    public int calculatePrice(){
+        if(l1 == null || l2 == null){
+            return 0;
+        }
+
+        //TODO create formula for price calculation
+        //Calculate volume
+        int v = Util.getVolume(l1, l2);
+        return v;
     }
 }

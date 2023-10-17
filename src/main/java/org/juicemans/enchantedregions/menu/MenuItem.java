@@ -14,9 +14,10 @@ import java.util.List;
 public interface MenuItem {
 
     public GuiItem getMenuItem(MenuHandler menuHandler, EnchantedRegionManager regionManager, Gui gui, Player player, ProtectedCuboidRegion region, Location table);
+
     public void execute(EnchantedRegionManager rm, Player p, Location table) throws Exception;
 
-    public GuiItem getDisabledItem(Player p, CreationPlayer cp, Location table, String reason);
+    public GuiItem getDisabledItem(EnchantedRegionManager rm, Player p, CreationPlayer cp, Location table, String reason);
 
-    public List<Component> getLore(CreationPlayer cp);
+    public List<Component> getLore(CreationPlayer cp, EnchantedRegionManager rm);
 }
