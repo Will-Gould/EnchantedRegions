@@ -15,9 +15,7 @@ import org.juicemans.enchantedregions.menu.Menu;
 import org.juicemans.enchantedregions.menu.MenuHandler;
 import org.juicemans.enchantedregions.menu.MenuInfo;
 import org.juicemans.enchantedregions.menu.MenuInteraction;
-import org.juicemans.enchantedregions.menu.menuitems.AddPrimaryPoint;
-import org.juicemans.enchantedregions.menu.menuitems.AddSecondaryPoint;
-import org.juicemans.enchantedregions.menu.menuitems.CreateRegion;
+import org.juicemans.enchantedregions.menu.menuitems.*;
 
 @MenuInfo(
         name = "regionCreation",
@@ -44,7 +42,6 @@ public class RegionCreation extends Menu {
         RegionQuery query = regionManager.getContainer().createQuery();
         ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(location));
         if(set.size() > 0){
-            player.sendMessage(Component.text("Table within existing region"));
             return false;
         }
 
@@ -76,6 +73,11 @@ public class RegionCreation extends Menu {
     protected void loadMenuItems() {
         loadMenuItem(AddPrimaryPoint.class, 0);
         loadMenuItem(AddSecondaryPoint.class, 9);
+        loadMenuItem(ConfirmSelection.class, 2);
+        loadMenuItem(Payment.class, 3);
+        loadMenuItem(NameAndCreate.class, 4);
+
+        loadMenuItem(CancelAction.class, 8);
         loadMenuItem(CreateRegion.class, 18);
     }
 }

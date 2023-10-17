@@ -1,8 +1,6 @@
 package org.juicemans.enchantedregions.menu.menuitems;
 
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -11,32 +9,31 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.juicemans.enchantedregions.EnchantedRegionManager;
 import org.juicemans.enchantedregions.beans.CreationPlayer;
+import org.juicemans.enchantedregions.beans.EditPlayer;
 import org.juicemans.enchantedregions.menu.MenuHandler;
 import org.juicemans.enchantedregions.menu.MenuItem;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
-public class CreateRegion implements MenuItem {
-
+public class CancelAction implements MenuItem {
     @Override
     public GuiItem getMenuItem(MenuHandler menuHandler, EnchantedRegionManager regionManager, Gui gui, Player player, ProtectedCuboidRegion region, Location table) {
-        if(regionManager.isCreatingRegion(player)){
+        //Player must be editing or creating to show in a menu
+        if(!regionManager.isCreatingRegion(player) && !regionManager.isEditingRegion(player)){
             return null;
         }
 
-        return ItemBuilder.from(Material.BOOK)
-                .name(Component.text("Create New Region"))
-                .lore(getLore(null, regionManager))
+        return ItemBuilder.from(Material.STRUCTURE_VOID)
+                .name(Component.text("Cancel", NamedTextColor.RED))
+                .glow(true)
                 .asGuiItem(event -> {
                     try{
                         execute(regionManager, player, table);
                         gui.close(player);
-                    }catch(Exception e){
+                    }catch (Exception e){
                         player.sendMessage(Component.text("There was an error processing this request"));
                     }
                 });
@@ -44,29 +41,29 @@ public class CreateRegion implements MenuItem {
 
     @Override
     public void execute(EnchantedRegionManager rm, Player p, Location table) throws Exception {
-        RegionContainer container = rm.getContainer();
+        CreationPlayer cp = rm.getCreationPlayer(p.getUniqueId());
+        EditPlayer ep = rm.getEditPlayer(p.getUniqueId());
 
-        //Double check we're not already creating or editing a region
-        if(rm.isEditingRegion(p) || rm.isCreatingRegion(p)){
-            return;
+        //Cancel creation
+        if(cp != null){
+            //Refund any payment
+            if(cp.getPaid() > 0){
+                p.getWorld().dropItem(p.getLocation(), new ItemStack(Material.DIAMOND, cp.getPaid()));
+            }
+
+            rm.removeCreationPlayer(p);
         }
 
-        //Check if enchanting table is still there
-        Material mat = p.getWorld().getBlockAt(table).getBlockData().getMaterial();
-        if(mat != Material.ENCHANTING_TABLE){
-            p.sendMessage(Component.text("Your enchanting table has gone missing", NamedTextColor.RED));
-            return;
+        //Cancel edit
+        if(ep != null){
+            //Check if lodestone has been removed
+            if(ep.getRegion().getLodestone() != null && ep.getRegion().getWorld().getBlockAt(ep.getRegion().getLodestone()).getBlockData().getMaterial() != Material.LODESTONE){
+                p.sendMessage("Lodestone has been removed");
+                ep.getRegion().setLodestone(null);
+            }
+            rm.removeEditPlayer(p);
         }
 
-        //Make sure there is no UUID collision (As unlikely as it is to happen)
-        UUID id = UUID.randomUUID();
-        boolean unique = false;
-        while(!unique){
-             unique = !Objects.requireNonNull(container.get(BukkitAdapter.adapt(table.getWorld()))).hasRegion(id.toString());
-        }
-
-        CreationPlayer cp = new CreationPlayer(p, table, id);
-        rm.addCreationPlayer(p.getUniqueId(), cp);
     }
 
     @Override
@@ -74,11 +71,8 @@ public class CreateRegion implements MenuItem {
         return null;
     }
 
-
     @Override
     public List<Component> getLore(CreationPlayer cp, EnchantedRegionManager rm) {
-        ArrayList<Component> lore = new ArrayList<>();
-        //lore.add(Component.text("Create new region"));
-        return lore;
+        return null;
     }
 }

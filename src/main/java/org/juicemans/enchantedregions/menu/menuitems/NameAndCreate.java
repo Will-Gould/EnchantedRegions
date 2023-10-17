@@ -10,43 +10,42 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.juicemans.enchantedregions.EnchantedRegionManager;
+import org.juicemans.enchantedregions.Util;
 import org.juicemans.enchantedregions.beans.CreationPlayer;
-import org.juicemans.enchantedregions.menu.Menu;
 import org.juicemans.enchantedregions.menu.MenuHandler;
 import org.juicemans.enchantedregions.menu.MenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddSecondaryPoint implements MenuItem {
+public class NameAndCreate implements MenuItem {
 
+    private MenuHandler menuHandler;
     @Override
     public GuiItem getMenuItem(MenuHandler menuHandler, EnchantedRegionManager regionManager, Gui gui, Player player, ProtectedCuboidRegion region, Location table) {
-        //Check if they are creating a region
-        if(!regionManager.isCreatingRegion(player)){
+        this.menuHandler = menuHandler;
+
+        CreationPlayer cp = regionManager.getCreationPlayer(player.getUniqueId());
+        if(cp == null){
             return null;
         }
-        CreationPlayer cp = regionManager.getCreationPlayer(player.getUniqueId());
 
-        if(cp.isConfirmed()){
-            return getDisabledItem(regionManager, player, cp, table, "Region is confirmed");
+        if(!cp.isConfirmed()){
+            return getDisabledItem(regionManager, player, cp, table, "Region selection not confirmed");
         }
 
-        //Adapt name part of allowing player to cancel point selection
-        Component name;
-        if(cp.getStep() == 2){
-            name = Component.text("Cancel Point Selection", NamedTextColor.RED);
-        }else{
-            name = Component.text("Select Second Corner", NamedTextColor.BLUE);
+        //TODO adjust to price
+        if(cp.getPaid() != Util.getVolume(cp.getCornerOne(), cp.getCornerTwo())){
+            return getDisabledItem(regionManager, player, cp, table, "Payment not complete");
         }
 
-        return ItemBuilder.from(Material.SOUL_TORCH)
-                .name(name)
+        return ItemBuilder.from(Material.ENCHANTED_BOOK)
+                .name(Component.text("Name and Create"))
                 .lore(getLore(cp, regionManager))
                 .asGuiItem(event -> {
                     try {
+                        //gui.close(p);
                         execute(regionManager, player, table);
-                        gui.close(player);
                     } catch (Exception e) {
                         player.sendMessage("There was an error processing this request");
                     }
@@ -56,34 +55,24 @@ public class AddSecondaryPoint implements MenuItem {
     @Override
     public void execute(EnchantedRegionManager rm, Player p, Location table) throws Exception {
         CreationPlayer cp = rm.getCreationPlayer(p.getUniqueId());
-        //Allow player to cancel point selection
-        if(cp.getStep() == 2){
-            cp.setStep(0);
-        }else{
-            cp.setStep(2);
-        }
+
+        this.menuHandler.openMenu("nameRegion", p, table);
     }
 
     @Override
     public GuiItem getDisabledItem(EnchantedRegionManager rm, Player p, CreationPlayer cp, Location table, String reason) {
-        return ItemBuilder.from(Material.TORCH)
-                .name(Component.text("Select Second Corner", NamedTextColor.RED))
+        return ItemBuilder.from(Material.ENCHANTED_BOOK)
+                .name(Component.text("Name and Create", NamedTextColor.RED))
                 .lore(Component.text(reason, NamedTextColor.RED))
-                .lore(getLore(cp, rm))
+                //.lore(getLore(regionManager, cp))
                 .asGuiItem();
     }
-
 
     @Override
     public List<Component> getLore(CreationPlayer cp, EnchantedRegionManager rm) {
         ArrayList<Component> lore = new ArrayList<>();
 
-        if(cp.getStep() != 2){
-            lore.add(Component.text("Punch the block in the opposite corner", NamedTextColor.GRAY));
-        }
-        if(cp.getCornerTwo() != null){
-            lore.add(Component.text(" + Currently set", NamedTextColor.BLUE));
-        }
+        lore.add(Component.text("Name and Create your region", NamedTextColor.GRAY));
 
         return lore;
     }

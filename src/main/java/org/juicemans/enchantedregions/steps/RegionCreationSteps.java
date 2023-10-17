@@ -11,7 +11,7 @@ import org.juicemans.enchantedregions.beans.CreationPlayer;
 
 public class RegionCreationSteps {
 
-    void step(EnchantedRegionManager regionManager, Player player, CreationPlayer creationPlayer, Location location){
+    public void step(EnchantedRegionManager regionManager, Player player, CreationPlayer creationPlayer, Location location){
         switch (creationPlayer.getStep()){
             case 0:
                 break;

@@ -37,8 +37,8 @@ public abstract class Menu {
             if(i != null){
                 gui.setItem(menuItem.getKey(), i);
             }
-            gui.getFiller().fill(ItemBuilder.from(Material.BLACK_STAINED_GLASS_PANE).asGuiItem());
         }
+        gui.getFiller().fill(ItemBuilder.from(Material.BLACK_STAINED_GLASS_PANE).asGuiItem());
         gui.open(player);
     }
 

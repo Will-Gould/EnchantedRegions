@@ -7,6 +7,7 @@ import com.sk89q.worldguard.domains.DefaultDomain;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.RegionResultSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
@@ -17,6 +18,8 @@ import org.bukkit.entity.Player;
 import org.juicemans.enchantedregions.beans.CreationPlayer;
 import org.juicemans.enchantedregions.beans.EditPlayer;
 import org.juicemans.enchantedregions.beans.EnchantedRegion;
+import org.juicemans.enchantedregions.steps.RegionCreationSteps;
+import org.juicemans.enchantedregions.steps.RegionEditSteps;
 
 import java.util.*;
 
@@ -26,12 +29,16 @@ public class EnchantedRegionManager {
     private final RegionContainer container;
     private final HashMap<UUID, CreationPlayer> creationPlayers;
     private final HashMap<UUID, EditPlayer> editPlayers;
+    private final RegionCreationSteps regionCreationSteps;
+    private final RegionEditSteps regionEditSteps;
 
     public EnchantedRegionManager(EnchantedRegions plugin){
         this.plugin = plugin;
         this.container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         this.creationPlayers = new HashMap<>();
         this.editPlayers = new HashMap<>();
+        this.regionCreationSteps = new RegionCreationSteps();
+        this.regionEditSteps = new RegionEditSteps();
     }
 
     public void addCreationPlayer(UUID id, CreationPlayer cp){
@@ -52,6 +59,10 @@ public class EnchantedRegionManager {
 
     public void addEditPlayer(UUID id, EditPlayer ep){
         this.editPlayers.putIfAbsent(id, ep);
+    }
+
+    public void removeEditPlayer(Player p){
+        this.editPlayers.remove(p.getUniqueId());
     }
 
     public EditPlayer getEditPlayer(UUID id){
@@ -185,4 +196,20 @@ public class EnchantedRegionManager {
         return Util.isInsideAB(creationPlayer.getEnchantingTable(), l1, l2);
     }
 
+    public RegionCreationSteps getRegionCreationSteps() {
+        return regionCreationSteps;
+    }
+
+    public RegionEditSteps getRegionEditSteps() {
+        return regionEditSteps;
+    }
+
+    public ApplicableRegionSet getOverlappingRegions(CreationPlayer cp){
+        RegionManager wgRegionManager = this.container.get(BukkitAdapter.adapt(cp.getWorld()));
+        ProtectedCuboidRegion temp = new ProtectedCuboidRegion("tmp", Util.locationToBv(cp.getCornerOne()), Util.locationToBv(cp.getCornerTwo()));
+        if(wgRegionManager == null){
+            return null;
+        }
+        return wgRegionManager.getApplicableRegions(temp);
+    }
 }

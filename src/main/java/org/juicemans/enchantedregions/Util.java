@@ -4,7 +4,10 @@ import com.sk89q.worldedit.math.BlockVector3;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.juicemans.enchantedregions.beans.EnchantedRegion;
 
 public class Util {
@@ -121,6 +124,19 @@ public class Util {
                 .append(Component.text(l.getY(), NamedTextColor.BLUE))
                 .append(Component.text(" z=", NamedTextColor.GRAY))
                 .append(Component.text(l.getZ(), NamedTextColor.BLUE));
+    }
+
+    public static int countPlayerDiamonds(Player p){
+        int count = 0;
+        for(ItemStack stack : p.getInventory()){
+            if(stack == null){
+                continue;
+            }
+            if(stack.getType().equals(Material.DIAMOND)){
+                count += stack.getAmount();
+            }
+        }
+        return count;
     }
 
 }
