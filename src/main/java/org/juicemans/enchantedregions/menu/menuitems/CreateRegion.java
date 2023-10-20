@@ -1,8 +1,10 @@
 package org.juicemans.enchantedregions.menu.menuitems;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
+import com.sk89q.worldguard.protection.regions.RegionQuery;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -10,6 +12,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.juicemans.enchantedregions.EnchantedRegionManager;
 import org.juicemans.enchantedregions.beans.CreationPlayer;
@@ -45,6 +48,9 @@ public class CreateRegion implements MenuItem {
     @Override
     public void execute(EnchantedRegionManager rm, Player p, Location table) throws Exception {
         RegionContainer container = rm.getContainer();
+        if(container == null){
+            throw new Exception("World Guard container error");
+        }
 
         //Double check we're not already creating or editing a region
         if(rm.isEditingRegion(p) || rm.isCreatingRegion(p)){
@@ -59,10 +65,21 @@ public class CreateRegion implements MenuItem {
         }
 
         //Make sure there is no UUID collision (As unlikely as it is to happen)
+        //Additionally make sure it isn't possible for UUIDs to collide across worlds
         UUID id = UUID.randomUUID();
         boolean unique = false;
         while(!unique){
-             unique = !Objects.requireNonNull(container.get(BukkitAdapter.adapt(table.getWorld()))).hasRegion(id.toString());
+            for(World w : rm.getPlugin().getServer().getWorlds()){
+                RegionManager wgRegionManager = container.get(BukkitAdapter.adapt(w));
+                if(wgRegionManager == null){
+                    continue;
+                }
+                if(wgRegionManager.hasRegion(id.toString())){
+                    unique = false;
+                    break;
+                }
+                unique = true;
+            }
         }
 
         CreationPlayer cp = new CreationPlayer(p, table, id);

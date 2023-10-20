@@ -1,9 +1,12 @@
 package org.juicemans.enchantedregions.beans;
 
+import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+
 public class EditPlayer {
 
     private EnchantedRegion region;
     private int edit;
+    private ProtectedCuboidRegion wgRegion;
 
     public EditPlayer(EnchantedRegion region, int edit){
         this.region = region;

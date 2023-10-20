@@ -11,7 +11,7 @@ import java.util.UUID;
 public class CreationPlayer {
 
     private Player player;
-    private String regionId;
+    private UUID regionId;
     private final World world;
     private int step;
     private final Location enchantingTable;
@@ -22,14 +22,14 @@ public class CreationPlayer {
 
     public CreationPlayer(Player player, Location enchantingTable, UUID regionId){
         this.player = player;
-        this.regionId = regionId.toString();
+        this.regionId = regionId;
         this.world = enchantingTable.getWorld();
         this.enchantingTable = enchantingTable;
         this.payment = 0;
         this.confirmed = false;
     }
 
-    public String getRegionId() {
+    public UUID getRegionId() {
         return regionId;
     }
 

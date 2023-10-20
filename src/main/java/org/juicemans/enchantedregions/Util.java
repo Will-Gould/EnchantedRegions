@@ -1,6 +1,7 @@
 package org.juicemans.enchantedregions;
 
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldguard.protection.managers.RegionManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -34,8 +35,9 @@ public class Util {
     }
 
     public static boolean isInsideRegion(Location p, EnchantedRegion r){
-        Location l1 = bvToLocation(r.getWorld(), r.getMinimumPoint());
-        Location l2 = bvToLocation(r.getWorld(), r.getMaximumPoint());
+
+        Location l1 = bvToLocation(r.getWorld(), r.getRegion().getMinimumPoint());
+        Location l2 = bvToLocation(r.getWorld(), r.getRegion().getMaximumPoint());
         if(p.getWorld().equals(r.getWorld())){
             return isInsideAB(p, l1, l2);
         }

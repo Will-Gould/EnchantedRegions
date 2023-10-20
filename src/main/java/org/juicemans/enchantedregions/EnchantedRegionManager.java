@@ -27,6 +27,7 @@ public class EnchantedRegionManager {
 
     private final EnchantedRegions plugin;
     private final RegionContainer container;
+    private final Map<UUID, EnchantedRegion> enchantedRegions;
     private final HashMap<UUID, CreationPlayer> creationPlayers;
     private final HashMap<UUID, EditPlayer> editPlayers;
     private final RegionCreationSteps regionCreationSteps;
@@ -35,6 +36,7 @@ public class EnchantedRegionManager {
     public EnchantedRegionManager(EnchantedRegions plugin){
         this.plugin = plugin;
         this.container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        this.enchantedRegions = new HashMap<>();
         this.creationPlayers = new HashMap<>();
         this.editPlayers = new HashMap<>();
         this.regionCreationSteps = new RegionCreationSteps();
@@ -73,52 +75,91 @@ public class EnchantedRegionManager {
         return this.editPlayers.containsKey(p.getUniqueId());
     }
 
-    public boolean isRegionEnchantingTable(Location l){
-        RegionQuery query = this.container.createQuery();
-        ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(l));
-        if(set.size() == 0){
-            return false;
+    public void addEnchantedRegion(UUID id, EnchantedRegion r){
+        this.enchantedRegions.put(id, r);
+    }
+
+    public void removeEnchantedRegion(UUID id){
+        EnchantedRegion enchantedRegion = this.enchantedRegions.get(id);
+        ProtectedRegion wgRegion = getWorldGuardRegion(id.toString());
+        //Remove from this system
+        if(enchantedRegion != null){
+            this.enchantedRegions.remove(id);
         }
-        for(ProtectedRegion pr : set){
-            if(pr instanceof EnchantedRegion){
-                EnchantedRegion er = (EnchantedRegion) pr;
-                if(er.getEnchantingTable().distance(l) == 0){
-                    return true;
-                }
+        //Remove from world guard
+        if(wgRegion != null){
+            removeWorldGuardRegion(id.toString());
+        }
+    }
+
+    public ProtectedRegion getWorldGuardRegion(String id){
+
+        for(World w : this.plugin.getServer().getWorlds()){
+            RegionManager wgRegionManager = this.container.get(BukkitAdapter.adapt(w));
+            if(wgRegionManager == null){
+                continue;
+            }
+            if(wgRegionManager.hasRegion(id)){
+                return wgRegionManager.getRegion(id);
             }
         }
+
+        return null;
+    }
+
+    public void removeWorldGuardRegion(String id){
+
+        for(World w : this.plugin.getServer().getWorlds()){
+            RegionManager wgRegionManager = this.container.get(BukkitAdapter.adapt(w));
+            if(wgRegionManager == null){
+                continue;
+            }
+            if(wgRegionManager.hasRegion(id)){
+                wgRegionManager.removeRegion(id);
+            }
+        }
+    }
+
+    public EnchantedRegion getEnchantedRegion(UUID id){
+        return this.enchantedRegions.get(id);
+    }
+
+    public Map<UUID, EnchantedRegion> getEnchantedRegions(){
+        return this.enchantedRegions;
+    }
+
+    public boolean isRegionEnchantingTable(Location l){
+        for(EnchantedRegion r : this.enchantedRegions.values()){
+            if(!r.getEnchantingTable().getWorld().equals(l.getWorld())){
+                return false;
+            }
+            if(r.getEnchantingTable().distance(l) == 0){
+                return true;
+            }
+        }
+
         return false;
     }
 
     public EnchantedRegion getRegionFromEnchantingTable(Location l){
-        RegionQuery query = this.container.createQuery();
-        ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(l));
-        if(set.size() == 0){
-            return null;
-        }
-        for(ProtectedRegion pr : set){
-            if(pr instanceof EnchantedRegion){
-                EnchantedRegion er = (EnchantedRegion) pr;
-                if(er.getEnchantingTable().distance(l) == 0){
-                    return er;
-                }
+        for(EnchantedRegion r : this.enchantedRegions.values()){
+            if(!r.getEnchantingTable().getWorld().equals(l.getWorld())){
+                return null;
+            }
+            if(r.getEnchantingTable().distance(l) == 0){
+                return r;
             }
         }
         return null;
     }
 
     public EnchantedRegion getRegionFromLodestone(Location l){
-        RegionQuery query = this.container.createQuery();
-        ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(l));
-        if(set.size() == 0){
-            return null;
-        }
-        for(ProtectedRegion pr : set){
-            if(pr instanceof EnchantedRegion){
-                EnchantedRegion er = (EnchantedRegion) pr;
-                if(er.getLodestone().distance(l) == 0){
-                    return er;
-                }
+        for(EnchantedRegion r : this.enchantedRegions.values()){
+            if(!r.getLodestone().getWorld().equals(l.getWorld())){
+                return null;
+            }
+            if(r.getLodestone().distance(l) == 0){
+                return r;
             }
         }
         return null;
@@ -148,15 +189,6 @@ public class EnchantedRegionManager {
 
     public EnchantedRegions getPlugin(){
         return this.plugin;
-    }
-
-    public boolean isInsideRegion(Location l, List<EnchantedRegion> regions){
-        for(EnchantedRegion r : regions){
-            if(Util.isInsideRegion(l, r)){
-                return true;
-            }
-        }
-        return false;
     }
 
     public boolean isValidRegionSelection(CreationPlayer creationPlayer){
@@ -212,4 +244,5 @@ public class EnchantedRegionManager {
         }
         return wgRegionManager.getApplicableRegions(temp);
     }
+
 }
