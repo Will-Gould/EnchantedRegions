@@ -99,20 +99,25 @@ public class NameRegion extends Menu {
 
                         //TODO regex
 
-
                         return Arrays.asList(
                                 AnvilGUI.ResponseAction.close(),
                                 AnvilGUI.ResponseAction.run(() -> {
+
+                                    //Create world guard region and enchanted region tied together by id
+                                    ProtectedCuboidRegion wgRegion = new ProtectedCuboidRegion(cp.getRegionId().toString(), Util.locationToBv(cp.getCornerOne()), Util.locationToBv(cp.getCornerTwo()));
+                                    wgRegion.getOwners().addPlayer(player.getUniqueId());
                                     EnchantedRegion r = new EnchantedRegion(
                                             cp.getRegionId(),
                                             stateSnapshot.getText(),
                                             cp.getWorld(),
-                                            Util.locationToBv(cp.getCornerOne()),
-                                            Util.locationToBv(cp.getCornerTwo()),
-                                            cp.getEnchantingTable()
+                                            cp.getEnchantingTable(),
+                                            cp.getPaid(),
+                                            wgRegion
                                     );
-                                    wgRegionManager.addRegion(r);
+                                    regionManager.addEnchantedRegion(cp.getRegionId(), r);
+                                    wgRegionManager.addRegion(wgRegion);
                                     regionManager.removeCreationPlayer(player);
+                                    regionManager.getPlugin().getIO().saveRegions();
                                 })
                         );
                     }

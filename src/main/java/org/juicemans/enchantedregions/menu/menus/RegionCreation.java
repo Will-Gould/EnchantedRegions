@@ -73,9 +73,9 @@ public class RegionCreation extends Menu {
     protected void loadMenuItems() {
         loadMenuItem(AddPrimaryPoint.class, 0);
         loadMenuItem(AddSecondaryPoint.class, 9);
-        loadMenuItem(ConfirmSelection.class, 2);
-        loadMenuItem(Payment.class, 3);
-        loadMenuItem(NameAndCreate.class, 4);
+        loadMenuItem(ConfirmSelection.class, 3);
+        loadMenuItem(Payment.class, 4);
+        loadMenuItem(NameAndCreate.class, 5);
 
         loadMenuItem(CancelAction.class, 8);
         loadMenuItem(CreateRegion.class, 18);

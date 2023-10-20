@@ -5,18 +5,33 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-public class EnchantedRegion extends ProtectedCuboidRegion {
+import java.util.UUID;
 
+public class EnchantedRegion {
+
+    private ProtectedCuboidRegion region;
+    private UUID id;
     private String name;
     private Location enchantingTable;
     private Location lodestone;
     private final World world;
+    private int diamonds;
 
-    public EnchantedRegion(String id, String name, World world, BlockVector3 pt1, BlockVector3 pt2, Location enchantingTable) {
-        super(id, pt1, pt2);
+    public EnchantedRegion(UUID id, String name, World world, Location enchantingTable, int diamonds, ProtectedCuboidRegion region) {
+        this.id = id;
+        this.region = region;
         this.world = world;
         this.enchantingTable = enchantingTable;
         this.name = name;
+        this.diamonds = diamonds;
+    }
+
+    public UUID getId(){
+        return this.id;
+    }
+
+    public ProtectedCuboidRegion getRegion(){
+        return this.region;
     }
 
     public Location getEnchantingTable(){
@@ -45,5 +60,13 @@ public class EnchantedRegion extends ProtectedCuboidRegion {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getDiamonds() {
+        return diamonds;
+    }
+
+    public void setDiamonds(int diamonds) {
+        this.diamonds = diamonds;
     }
 }
