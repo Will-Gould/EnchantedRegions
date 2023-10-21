@@ -30,14 +30,17 @@ public class PlayerListener implements Listener {
             EnchantedRegionManager rm = this.plugin.getRegionManager();
 
             //Handle enchanting table interaction
-            if(event.getClickedBlock().getBlockData().getMaterial() == Material.ENCHANTING_TABLE){
-                if(rm.isRegionEnchantingTable(loc)){
-                    //TODO open region management menu
-                    return;
+            if(p.getInventory().getItemInMainHand().isEmpty()){
+                if(event.getClickedBlock().getBlockData().getMaterial() == Material.ENCHANTING_TABLE){
+                    if(rm.isRegionEnchantingTable(loc)){
+                        this.plugin.getMenuHandler().openMenu("regionManagement", p, loc);
+                        return;
+                    }
+                    this.plugin.getMenuHandler().openMenu("regionCreation", p, loc);
                 }
-                this.plugin.getMenuHandler().openMenu("regionCreation", p, loc);
             }
 
+            //Handle Lodestone selection
             EditPlayer ep = rm.getEditPlayer(p.getUniqueId());
             if(ep != null){
                 if(event.getClickedBlock().getBlockData().getMaterial() == Material.LODESTONE && ep.getEdit() == 4){

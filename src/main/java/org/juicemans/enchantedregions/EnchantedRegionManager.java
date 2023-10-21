@@ -131,7 +131,7 @@ public class EnchantedRegionManager {
     public boolean isRegionEnchantingTable(Location l){
         for(EnchantedRegion r : this.enchantedRegions.values()){
             if(!r.getEnchantingTable().getWorld().equals(l.getWorld())){
-                return false;
+                continue;
             }
             if(r.getEnchantingTable().distance(l) == 0){
                 return true;
@@ -144,7 +144,7 @@ public class EnchantedRegionManager {
     public EnchantedRegion getRegionFromEnchantingTable(Location l){
         for(EnchantedRegion r : this.enchantedRegions.values()){
             if(!r.getEnchantingTable().getWorld().equals(l.getWorld())){
-                return null;
+                continue;
             }
             if(r.getEnchantingTable().distance(l) == 0){
                 return r;
@@ -156,7 +156,7 @@ public class EnchantedRegionManager {
     public EnchantedRegion getRegionFromLodestone(Location l){
         for(EnchantedRegion r : this.enchantedRegions.values()){
             if(!r.getLodestone().getWorld().equals(l.getWorld())){
-                return null;
+                continue;
             }
             if(r.getLodestone().distance(l) == 0){
                 return r;
@@ -167,6 +167,9 @@ public class EnchantedRegionManager {
 
     public boolean isTableBeingUsedForCreation(Location l){
         for(CreationPlayer cp : this.creationPlayers.values()){
+            if(!cp.getWorld().equals(l.getWorld())){
+                continue;
+            }
             if(cp.getEnchantingTable().distance(l) == 0){
                 return true;
             }
@@ -176,6 +179,9 @@ public class EnchantedRegionManager {
 
     public CreationPlayer getCreationPlayerFromTable(Location l){
         for(CreationPlayer cp : this.creationPlayers.values()){
+            if(!cp.getWorld().equals(l.getWorld())){
+                continue;
+            }
             if(cp.getEnchantingTable().distance(l) == 0){
                 return cp;
             }
