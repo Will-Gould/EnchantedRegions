@@ -3,6 +3,7 @@ package org.juicemans.enchantedregions.menu;
 import com.google.common.collect.Lists;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
+import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import dev.triumphteam.gui.guis.Gui;
@@ -12,10 +13,14 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.juicemans.enchantedregions.EnchantedRegions;
 import org.juicemans.enchantedregions.EnchantedRegionManager;
+import org.juicemans.enchantedregions.Util;
 import org.juicemans.enchantedregions.beans.EnchantedRegion;
+import org.juicemans.enchantedregions.menu.menus.NameRegion;
+import org.juicemans.enchantedregions.menu.menus.RegionCreation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class MenuHandler {
 
@@ -23,10 +28,10 @@ public class MenuHandler {
     private final HashMap<String, Menu> menus;
     private final EnchantedRegionManager regionManager;
 
-    public MenuHandler(EnchantedRegions plugin){
+    public MenuHandler(EnchantedRegions plugin, EnchantedRegionManager regionManager){
         this.plugin = plugin;
         this.menus = new HashMap<>();
-        this.regionManager = plugin.getRegionManager();
+        this.regionManager = regionManager;
         loadMenus();
     }
 
@@ -35,17 +40,16 @@ public class MenuHandler {
         RegionQuery query = this.regionManager.getContainer().createQuery();
         ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(location));
         ArrayList<ProtectedRegion> regions = Lists.newArrayList(set);
+
         EnchantedRegion region = null;
-        if(regions.isEmpty()){
-            this.plugin.getLogger().info("No applicable regions");
-        }else{
-            if(regions.get(0) instanceof EnchantedRegion){
-                region = (EnchantedRegion) regions.get(0);
+        ProtectedCuboidRegion wgRegion = null;
+        //Enchanted regions should not be able to overlap so there should only be one valid region
+        //Loop over the regions in case a regular world guard region is also overlapping
+        for(ProtectedRegion pr : regions){
+            if(pr instanceof ProtectedCuboidRegion){
+                region = this.regionManager.getEnchantedRegion(UUID.fromString(pr.getId()));
+                wgRegion = (ProtectedCuboidRegion) pr;
             }
-        }
-        if(regions.size() > 1){
-            this.plugin.getLogger().info("More than 1 applicable region");
-            return;
         }
 
         if(m == null){
@@ -56,21 +60,25 @@ public class MenuHandler {
 
         //Check if player is creating something
         if(regionManager.isCreatingRegion(player) && i.disableWhenCreating()){
+            this.plugin.getLogger().info("Player is creating something");
             return;
         }
 
         //Check if player is editing region
         if(regionManager.isEditingRegion(player) && i.disableWhenEditing()){
+            this.plugin.getLogger().info("Player is editing region");
             return;
         }
 
         //Check for enchanting table
-        if(false){
-
+        if(location == null && i.needsTable()){
+            this.plugin.getLogger().info("Player needs table");
+            return;
         }
 
         //Check for region
         if(region == null && i.needsRegion()){
+            this.plugin.getLogger().info("No region found");
             return;
         }
 
@@ -104,7 +112,7 @@ public class MenuHandler {
 
         //Now pass it over to the menu to handle menu items and display
         try{
-            m.display(this.regionManager.getContainer(), gui, player, region, location);
+            m.display(this, this.regionManager, gui, player, wgRegion, location);
         }catch (Exception e){
             player.sendMessage(Component.text("There was an error opening this menu", NamedTextColor.RED));
         }
@@ -116,7 +124,8 @@ public class MenuHandler {
     }
 
     private void loadMenus() {
-
+        loadMenu(RegionCreation.class);
+        loadMenu(NameRegion.class);
     }
 
     private void loadMenu(Class<? extends Menu> m){
