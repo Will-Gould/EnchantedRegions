@@ -70,7 +70,7 @@ public class NameRegion extends Menu {
     }
 
     @Override
-    protected void display(MenuHandler menuHandler, EnchantedRegionManager regionManager, Gui gui, Player player, ProtectedCuboidRegion region, Location table){
+    protected void display(MenuHandler menuHandler, EnchantedRegionManager regionManager, Gui gui, Player player, EnchantedRegion region, Location table){
         if(!isValid(regionManager, player, table)){
             return;
         }
@@ -116,6 +116,7 @@ public class NameRegion extends Menu {
                                     );
                                     regionManager.addEnchantedRegion(cp.getRegionId(), r);
                                     wgRegionManager.addRegion(wgRegion);
+                                    cp.cancelTimeoutTask();
                                     regionManager.removeCreationPlayer(player);
                                     regionManager.getPlugin().getIO().saveRegions();
                                 })

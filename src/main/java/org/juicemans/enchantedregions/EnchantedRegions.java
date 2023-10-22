@@ -4,6 +4,7 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.juicemans.enchantedregions.listeners.PlayerListener;
+import org.juicemans.enchantedregions.listeners.ProtectionListener;
 import org.juicemans.enchantedregions.menu.MenuHandler;
 
 public final class EnchantedRegions extends JavaPlugin {
@@ -24,6 +25,7 @@ public final class EnchantedRegions extends JavaPlugin {
 
         //Register listeners
         plm.registerEvents(new PlayerListener(this), this);
+        plm.registerEvents(new ProtectionListener(this), this);
 
     }
 

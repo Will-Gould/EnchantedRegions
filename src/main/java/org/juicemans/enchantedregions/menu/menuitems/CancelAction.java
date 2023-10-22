@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.juicemans.enchantedregions.EnchantedRegionManager;
 import org.juicemans.enchantedregions.beans.CreationPlayer;
 import org.juicemans.enchantedregions.beans.EditPlayer;
+import org.juicemans.enchantedregions.beans.EnchantedRegion;
 import org.juicemans.enchantedregions.menu.MenuHandler;
 import org.juicemans.enchantedregions.menu.MenuItem;
 
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class CancelAction implements MenuItem {
     @Override
-    public GuiItem getMenuItem(MenuHandler menuHandler, EnchantedRegionManager regionManager, Gui gui, Player player, ProtectedCuboidRegion region, Location table) {
+    public GuiItem getMenuItem(MenuHandler menuHandler, EnchantedRegionManager regionManager, Gui gui, Player player, EnchantedRegion region, Location table) {
         //Player must be editing or creating to show in a menu
         if(!regionManager.isCreatingRegion(player) && !regionManager.isEditingRegion(player)){
             return null;
@@ -72,7 +73,7 @@ public class CancelAction implements MenuItem {
     }
 
     @Override
-    public List<Component> getLore(CreationPlayer cp, EnchantedRegionManager rm) {
+    public List<Component> getLore(CreationPlayer cp, EnchantedRegionManager rm, EnchantedRegion rf) {
         return null;
     }
 }

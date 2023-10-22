@@ -78,6 +78,6 @@ public class RegionCreation extends Menu {
         loadMenuItem(NameAndCreate.class, 5);
 
         loadMenuItem(CancelAction.class, 8);
-        loadMenuItem(CreateRegion.class, 18);
+        loadMenuItem(CreateRegion.class, 13);
     }
 }

@@ -5,6 +5,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.juicemans.enchantedregions.EnchantedRegionManager;
 import org.juicemans.enchantedregions.Util;
 import org.juicemans.enchantedregions.beans.EditPlayer;
@@ -22,6 +23,10 @@ public class RegionEditSteps {
             case 4:
                 //Edit warp
                 setRegionWarp(regionManager, player, editPlayer, location);
+                break;
+            case 5:
+                //Delete region
+                deleteRegion(regionManager, player, editPlayer, location);
                 break;
         }
     }
@@ -46,8 +51,22 @@ public class RegionEditSteps {
 
         p.sendMessage("Region Lodestone warp saved");
         ep.getRegion().setLodestone(l);
+        ep.removeTimeoutTask();
         rm.removeEditPlayer(p);
-        //TODO save region
+        rm.getPlugin().getIO().saveRegions();
     }
+
+    private void deleteRegion(EnchantedRegionManager rm, Player p, EditPlayer ep, Location l) {
+        //Refund payment
+        if(ep.getRegion().getDiamonds() > 0){
+            p.getWorld().dropItem(p.getLocation(), new ItemStack(Material.DIAMOND, ep.getRegion().getDiamonds()));
+        }
+        //Remove region and edit player
+        rm.removeEnchantedRegion(ep.getRegion().getId());
+        ep.removeTimeoutTask();
+        rm.removeEditPlayer(p);
+        p.sendMessage(Component.text("Region has been removed", NamedTextColor.BLUE));
+    }
+
 
 }

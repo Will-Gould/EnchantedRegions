@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.juicemans.enchantedregions.EnchantedRegionManager;
 import org.juicemans.enchantedregions.Util;
 import org.juicemans.enchantedregions.beans.CreationPlayer;
+import org.juicemans.enchantedregions.beans.EnchantedRegion;
 import org.juicemans.enchantedregions.menu.MenuHandler;
 import org.juicemans.enchantedregions.menu.MenuItem;
 
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class Payment implements MenuItem {
     @Override
-    public GuiItem getMenuItem(MenuHandler menuHandler, EnchantedRegionManager regionManager, Gui gui, Player player, ProtectedCuboidRegion region, Location table) {
+    public GuiItem getMenuItem(MenuHandler menuHandler, EnchantedRegionManager regionManager, Gui gui, Player player, EnchantedRegion region, Location table) {
         CreationPlayer cp = regionManager.getCreationPlayer(player.getUniqueId());
         if(cp == null){
             return null;
@@ -43,7 +44,7 @@ public class Payment implements MenuItem {
 
         return ItemBuilder.from(Material.DIAMOND)
                 .name(Component.text("Pay For Region"))
-                .lore(getLore(cp, regionManager))
+                .lore(getLore(cp, regionManager, null))
                 .asGuiItem(event -> {
                     try {
                         execute(regionManager, player, table);
@@ -103,7 +104,7 @@ public class Payment implements MenuItem {
     }
 
     @Override
-    public List<Component> getLore(CreationPlayer cp, EnchantedRegionManager rm) {
+    public List<Component> getLore(CreationPlayer cp, EnchantedRegionManager rm, EnchantedRegion r) {
         ArrayList<Component> lore = new ArrayList<>();
 
         lore.add(Component.text("This will be refunded after" + '\n' + "un-confirming or deletion of region", NamedTextColor.GRAY));

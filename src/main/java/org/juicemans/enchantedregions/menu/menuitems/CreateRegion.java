@@ -16,25 +16,25 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.juicemans.enchantedregions.EnchantedRegionManager;
 import org.juicemans.enchantedregions.beans.CreationPlayer;
+import org.juicemans.enchantedregions.beans.EnchantedRegion;
 import org.juicemans.enchantedregions.menu.MenuHandler;
 import org.juicemans.enchantedregions.menu.MenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 public class CreateRegion implements MenuItem {
 
     @Override
-    public GuiItem getMenuItem(MenuHandler menuHandler, EnchantedRegionManager regionManager, Gui gui, Player player, ProtectedCuboidRegion region, Location table) {
+    public GuiItem getMenuItem(MenuHandler menuHandler, EnchantedRegionManager regionManager, Gui gui, Player player, EnchantedRegion region, Location table) {
         if(regionManager.isCreatingRegion(player)){
             return null;
         }
 
         return ItemBuilder.from(Material.BOOK)
                 .name(Component.text("Create New Region"))
-                .lore(getLore(null, regionManager))
+                .lore(getLore(null, regionManager, null))
                 .asGuiItem(event -> {
                     try{
                         execute(regionManager, player, table);
@@ -82,7 +82,7 @@ public class CreateRegion implements MenuItem {
             }
         }
 
-        CreationPlayer cp = new CreationPlayer(p, table, id);
+        CreationPlayer cp = new CreationPlayer(p, table, id, rm);
         rm.addCreationPlayer(p.getUniqueId(), cp);
     }
 
@@ -93,7 +93,7 @@ public class CreateRegion implements MenuItem {
 
 
     @Override
-    public List<Component> getLore(CreationPlayer cp, EnchantedRegionManager rm) {
+    public List<Component> getLore(CreationPlayer cp, EnchantedRegionManager rm, EnchantedRegion r) {
         ArrayList<Component> lore = new ArrayList<>();
         //lore.add(Component.text("Create new region"));
         return lore;

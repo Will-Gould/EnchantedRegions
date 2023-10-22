@@ -32,6 +32,8 @@ public class EnchantedRegionManager {
     private final HashMap<UUID, EditPlayer> editPlayers;
     private final RegionCreationSteps regionCreationSteps;
     private final RegionEditSteps regionEditSteps;
+    private final int[] MIN_REGION_DIMENSIONS = {3, 3, 3};
+    private final int[] MAX_REGION_DIMENSIONS = {1000, 128, 1000};
 
     public EnchantedRegionManager(EnchantedRegions plugin){
         this.plugin = plugin;
@@ -85,6 +87,7 @@ public class EnchantedRegionManager {
         //Remove from this system
         if(enchantedRegion != null){
             this.enchantedRegions.remove(id);
+            this.plugin.getIO().removeJail(id.toString(), enchantedRegion.getWorld().getName());
         }
         //Remove from world guard
         if(wgRegion != null){
@@ -107,7 +110,7 @@ public class EnchantedRegionManager {
         return null;
     }
 
-    public void removeWorldGuardRegion(String id){
+    private void removeWorldGuardRegion(String id){
 
         for(World w : this.plugin.getServer().getWorlds()){
             RegionManager wgRegionManager = this.container.get(BukkitAdapter.adapt(w));
@@ -131,7 +134,7 @@ public class EnchantedRegionManager {
     public boolean isRegionEnchantingTable(Location l){
         for(EnchantedRegion r : this.enchantedRegions.values()){
             if(!r.getEnchantingTable().getWorld().equals(l.getWorld())){
-                return false;
+                continue;
             }
             if(r.getEnchantingTable().distance(l) == 0){
                 return true;
@@ -144,7 +147,7 @@ public class EnchantedRegionManager {
     public EnchantedRegion getRegionFromEnchantingTable(Location l){
         for(EnchantedRegion r : this.enchantedRegions.values()){
             if(!r.getEnchantingTable().getWorld().equals(l.getWorld())){
-                return null;
+                continue;
             }
             if(r.getEnchantingTable().distance(l) == 0){
                 return r;
@@ -156,7 +159,7 @@ public class EnchantedRegionManager {
     public EnchantedRegion getRegionFromLodestone(Location l){
         for(EnchantedRegion r : this.enchantedRegions.values()){
             if(!r.getLodestone().getWorld().equals(l.getWorld())){
-                return null;
+                continue;
             }
             if(r.getLodestone().distance(l) == 0){
                 return r;
@@ -167,6 +170,9 @@ public class EnchantedRegionManager {
 
     public boolean isTableBeingUsedForCreation(Location l){
         for(CreationPlayer cp : this.creationPlayers.values()){
+            if(!cp.getWorld().equals(l.getWorld())){
+                continue;
+            }
             if(cp.getEnchantingTable().distance(l) == 0){
                 return true;
             }
@@ -176,6 +182,9 @@ public class EnchantedRegionManager {
 
     public CreationPlayer getCreationPlayerFromTable(Location l){
         for(CreationPlayer cp : this.creationPlayers.values()){
+            if(!cp.getWorld().equals(l.getWorld())){
+                continue;
+            }
             if(cp.getEnchantingTable().distance(l) == 0){
                 return cp;
             }
@@ -224,8 +233,33 @@ public class EnchantedRegionManager {
             }
         }
 
+        //Check if it is within min and maximum dimensions
+        if(!isSelectionAboveMin(l1, l2) || !isSelectionWithinMax(l1, l2)){
+            return false;
+        }
+
         //Check if enchanting table is inside region
         return Util.isInsideAB(creationPlayer.getEnchantingTable(), l1, l2);
+
+    }
+
+    public boolean isSelectionAboveMin(Location l1, Location l2){
+        Location min = Util.getMinLocation(l1, l2);
+        Location max = Util.getMaxLocation(l1, l2);
+        int width = max.getBlockX() - min.getBlockX() + 1;
+        int height = max.getBlockY() - min.getBlockY() + 1;
+        int depth = max.getBlockZ() - min.getBlockZ() + 1;
+        return width >= MIN_REGION_DIMENSIONS[0] && height >= MIN_REGION_DIMENSIONS[1] && depth >= MIN_REGION_DIMENSIONS[2];
+    }
+
+    public boolean isSelectionWithinMax(Location l1, Location l2){
+        Location min = Util.getMinLocation(l1, l2);
+        Location max = Util.getMaxLocation(l1, l2);
+        int width = max.getBlockX() - min.getBlockX() + 1;
+        int height = max.getBlockY() - min.getBlockY() + 1;
+        int depth = max.getBlockZ() - min.getBlockZ() + 1;
+
+        return width <= MAX_REGION_DIMENSIONS[0] && height <= MAX_REGION_DIMENSIONS[1] && depth <= MAX_REGION_DIMENSIONS[2];
     }
 
     public RegionCreationSteps getRegionCreationSteps() {

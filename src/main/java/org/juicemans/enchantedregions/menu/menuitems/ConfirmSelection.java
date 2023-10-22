@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.juicemans.enchantedregions.EnchantedRegionManager;
 import org.juicemans.enchantedregions.Util;
 import org.juicemans.enchantedregions.beans.CreationPlayer;
+import org.juicemans.enchantedregions.beans.EnchantedRegion;
 import org.juicemans.enchantedregions.menu.MenuHandler;
 import org.juicemans.enchantedregions.menu.MenuItem;
 
@@ -21,7 +22,7 @@ import java.util.List;
 
 public class ConfirmSelection implements MenuItem {
     @Override
-    public GuiItem getMenuItem(MenuHandler menuHandler, EnchantedRegionManager regionManager, Gui gui, Player player, ProtectedCuboidRegion region, Location table) {
+    public GuiItem getMenuItem(MenuHandler menuHandler, EnchantedRegionManager regionManager, Gui gui, Player player, EnchantedRegion region, Location table) {
 
         CreationPlayer cp = regionManager.getCreationPlayer(player.getUniqueId());
         if(cp == null){
@@ -47,7 +48,7 @@ public class ConfirmSelection implements MenuItem {
 
         return ItemBuilder.from(Material.FILLED_MAP)
                 .name(Component.text("Confirm Region Selection", NamedTextColor.LIGHT_PURPLE))
-                .lore(getLore(cp, regionManager))
+                .lore(getLore(cp, regionManager, null))
                 .asGuiItem(event -> {
                     try {
                         execute(regionManager, player, table);
@@ -70,12 +71,12 @@ public class ConfirmSelection implements MenuItem {
     public GuiItem getDisabledItem(EnchantedRegionManager rm, Player p, CreationPlayer cp, Location table, String reason) {
         return ItemBuilder.from(Material.FILLED_MAP)
                 .name(Component.text("Confirm Region Selection", NamedTextColor.RED))
-                .lore(getLore(cp, rm))
+                .lore(getLore(cp, rm, null))
                 .asGuiItem();
     }
 
     @Override
-    public List<Component> getLore(CreationPlayer cp, EnchantedRegionManager rm) {
+    public List<Component> getLore(CreationPlayer cp, EnchantedRegionManager rm, EnchantedRegion r) {
         ArrayList<Component> lore = new ArrayList<>();
 
         //Has primary point been selected?
@@ -106,6 +107,18 @@ public class ConfirmSelection implements MenuItem {
         //Is the region intersecting an existing region?
         if(rm.getOverlappingRegions(cp).size() > 0){
             lore.add(Component.text(" - Selected region intersects existing region", NamedTextColor.RED));
+        }
+
+        if(rm.isSelectionAboveMin(cp.getCornerOne(), cp.getCornerTwo())){
+            lore.add(Component.text(" + Region is above 3 x 3 x 3 minimum dimensions", NamedTextColor.GREEN));
+        }else{
+            lore.add(Component.text(" - Region is below 3 x 3 x 3 minimum dimensions", NamedTextColor.RED));
+        }
+
+        if(rm.isSelectionWithinMax(cp.getCornerOne(), cp.getCornerTwo())){
+            lore.add(Component.text(" + Region is within maximum dimensions", NamedTextColor.GREEN));
+        }else{
+            lore.add(Component.text(" - Region is above maximum dimensions", NamedTextColor.RED));
         }
 
         return lore;
