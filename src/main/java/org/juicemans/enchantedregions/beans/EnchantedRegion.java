@@ -4,13 +4,14 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.juicemans.enchantedregions.Util;
 
 import java.util.UUID;
 
 public class EnchantedRegion {
 
-    private ProtectedCuboidRegion region;
-    private UUID id;
+    private final ProtectedCuboidRegion region;
+    private final UUID id;
     private String name;
     private Location enchantingTable;
     private Location lodestone;
@@ -68,5 +69,12 @@ public class EnchantedRegion {
 
     public void setDiamonds(int diamonds) {
         this.diamonds = diamonds;
+    }
+
+    public int getVolume(){
+        if(this.region == null){
+            return 0;
+        }
+        return region.volume();
     }
 }

@@ -1,6 +1,5 @@
 package org.juicemans.enchantedregions.menu.menuitems;
 
-import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -10,8 +9,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.juicemans.enchantedregions.EnchantedRegionManager;
-import org.juicemans.enchantedregions.Util;
 import org.juicemans.enchantedregions.beans.CreationPlayer;
+import org.juicemans.enchantedregions.beans.EditPlayer;
 import org.juicemans.enchantedregions.beans.EnchantedRegion;
 import org.juicemans.enchantedregions.menu.MenuHandler;
 import org.juicemans.enchantedregions.menu.MenuItem;
@@ -19,34 +18,36 @@ import org.juicemans.enchantedregions.menu.MenuItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NameAndCreate implements MenuItem {
+public class SetWarp implements MenuItem {
 
-    private MenuHandler menuHandler;
     @Override
     public GuiItem getMenuItem(MenuHandler menuHandler, EnchantedRegionManager regionManager, Gui gui, Player player, EnchantedRegion region, Location table) {
-        this.menuHandler = menuHandler;
 
-        CreationPlayer cp = regionManager.getCreationPlayer(player.getUniqueId());
-        if(cp == null){
+        if(region == null){
             return null;
         }
 
-        if(!cp.isConfirmed()){
-            return getDisabledItem(regionManager, player, cp, table, "Region selection not confirmed");
+        if(region.getLodestone() == null){
+            return ItemBuilder.from(Material.LODESTONE)
+                    .name(Component.text("Edit Lodestone Warp", NamedTextColor.GREEN))
+                    .lore(getLore(null, regionManager, region))
+                    .asGuiItem(event -> {
+                        try{
+                            execute(regionManager, player, table);
+                            gui.close(player);
+                        }catch (Exception e){
+                            player.sendMessage("There was an error processing this request");
+                        }
+                    });
         }
 
-        //TODO adjust to price
-        if(cp.getPaid() != Util.getVolume(cp.getCornerOne(), cp.getCornerTwo())){
-            return getDisabledItem(regionManager, player, cp, table, "Payment not complete");
-        }
-
-        return ItemBuilder.from(Material.ENCHANTED_BOOK)
-                .name(Component.text("Name and Create"))
-                .lore(getLore(cp, regionManager, null))
+        return ItemBuilder.from(Material.LODESTONE)
+                .name(Component.text("Set Lodestone Warp", NamedTextColor.GREEN))
+                .lore(getLore(null, regionManager, region))
                 .asGuiItem(event -> {
                     try {
-                        //gui.close(p);
                         execute(regionManager, player, table);
+                        gui.close(player);
                     } catch (Exception e) {
                         player.sendMessage("There was an error processing this request");
                     }
@@ -55,26 +56,21 @@ public class NameAndCreate implements MenuItem {
 
     @Override
     public void execute(EnchantedRegionManager rm, Player p, Location table) throws Exception {
-        CreationPlayer cp = rm.getCreationPlayer(p.getUniqueId());
-
-        this.menuHandler.openMenu("nameRegion", p, table);
+        EnchantedRegion r = rm.getRegionFromEnchantingTable(table);
+        EditPlayer ep = new EditPlayer(rm, p, r, 4);
+        rm.addEditPlayer(p.getUniqueId(), ep);
     }
 
     @Override
     public GuiItem getDisabledItem(EnchantedRegionManager rm, Player p, CreationPlayer cp, Location table, String reason) {
-        return ItemBuilder.from(Material.ENCHANTED_BOOK)
-                .name(Component.text("Name and Create", NamedTextColor.RED))
-                .lore(Component.text(reason, NamedTextColor.RED))
-                //.lore(getLore(regionManager, cp))
-                .asGuiItem();
+        return null;
     }
 
     @Override
-    public List<Component> getLore(CreationPlayer cp, EnchantedRegionManager rm, EnchantedRegion r) {
+    public List<Component> getLore(CreationPlayer cp, EnchantedRegionManager rm, EnchantedRegion region) {
         ArrayList<Component> lore = new ArrayList<>();
-
-        lore.add(Component.text("Name and Create your region", NamedTextColor.GRAY));
-
+        lore.add(Component.text("Select a lodestone in your", NamedTextColor.GRAY));
+        lore.add(Component.text("region to set a warp point", NamedTextColor.GRAY));
         return lore;
     }
 }

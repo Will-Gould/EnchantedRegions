@@ -38,20 +38,7 @@ public class MenuHandler {
 
     public void openMenu(String menuName, Player player, Location location){
         Menu m = getMenu(menuName);
-        RegionQuery query = this.regionManager.getContainer().createQuery();
-        ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(location));
-        ArrayList<ProtectedRegion> regions = Lists.newArrayList(set);
-
-        EnchantedRegion region = null;
-        ProtectedCuboidRegion wgRegion = null;
-        //Enchanted regions should not be able to overlap so there should only be one valid region
-        //Loop over the regions in case a regular world guard region is also overlapping
-        for(ProtectedRegion pr : regions){
-            if(pr instanceof ProtectedCuboidRegion){
-                region = this.regionManager.getEnchantedRegion(UUID.fromString(pr.getId()));
-                wgRegion = (ProtectedCuboidRegion) pr;
-            }
-        }
+        EnchantedRegion region = regionManager.getRegionFromEnchantingTable(location);
 
         if(m == null){
             return;
@@ -113,8 +100,9 @@ public class MenuHandler {
 
         //Now pass it over to the menu to handle menu items and display
         try{
-            m.display(this, this.regionManager, gui, player, wgRegion, location);
+            m.display(this, this.regionManager, gui, player, region, location);
         }catch (Exception e){
+            e.printStackTrace();
             player.sendMessage(Component.text("There was an error opening this menu", NamedTextColor.RED));
         }
 

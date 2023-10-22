@@ -102,9 +102,6 @@ public class EnchantedRegionIO {
         if(wgRegionManager.getRegion(r) instanceof ProtectedCuboidRegion){
             wgRegion = (ProtectedCuboidRegion) wgRegionManager.getRegion(r);
         }
-        if(wgRegion == null){
-            return;
-        }
 
         UUID id = UUID.fromString(r);
         String name = flat.getString(node + "name");
@@ -115,4 +112,8 @@ public class EnchantedRegionIO {
         this.plugin.getRegionManager().addEnchantedRegion(id, region);
     }
 
+    public void removeJail(String id, String world){
+        flat.set("worlds." + world + "." + id, null);
+        saveRegions();
+    }
 }

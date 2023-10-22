@@ -13,6 +13,9 @@ import org.juicemans.enchantedregions.menu.Menu;
 import org.juicemans.enchantedregions.menu.MenuInfo;
 import org.juicemans.enchantedregions.menu.MenuInteraction;
 import org.juicemans.enchantedregions.menu.menuitems.CancelAction;
+import org.juicemans.enchantedregions.menu.menuitems.DeleteRegion;
+import org.juicemans.enchantedregions.menu.menuitems.RegionInfo;
+import org.juicemans.enchantedregions.menu.menuitems.SetWarp;
 
 @MenuInfo(
         name = "regionManagement",
@@ -34,9 +37,9 @@ public class RegionManagement extends Menu {
             return false;
         }
 
-        //Check if world guard region exists
+        //Return if WorldGuard region has gone missing before we test for ownership or membership
         if(region.getRegion() == null){
-            return false;
+            return true;
         }
 
         //Check if the player is an owner
@@ -49,8 +52,10 @@ public class RegionManagement extends Menu {
 
     @Override
     protected void loadMenuItems() {
+        loadMenuItem(RegionInfo.class, 0);
+        loadMenuItem(SetWarp.class, 5);
 
-
+        loadMenuItem(DeleteRegion.class, 22);
         loadMenuItem(CancelAction.class, 8);
     }
 }
