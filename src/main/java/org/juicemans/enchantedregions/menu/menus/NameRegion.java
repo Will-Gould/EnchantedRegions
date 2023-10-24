@@ -5,6 +5,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import dev.triumphteam.gui.components.GuiType;
 import dev.triumphteam.gui.guis.Gui;
+import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.wesjd.anvilgui.AnvilGUI;
@@ -20,6 +21,7 @@ import org.juicemans.enchantedregions.beans.EnchantedRegion;
 import org.juicemans.enchantedregions.menu.Menu;
 import org.juicemans.enchantedregions.menu.MenuHandler;
 import org.juicemans.enchantedregions.menu.MenuInfo;
+import org.juicemans.enchantedregions.menu.MenuItem;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -132,4 +134,5 @@ public class NameRegion extends Menu {
     protected void loadMenuItems() {
 
     }
+
 }

@@ -18,6 +18,7 @@ import org.juicemans.enchantedregions.beans.EnchantedRegion;
 import org.juicemans.enchantedregions.menu.menus.NameRegion;
 import org.juicemans.enchantedregions.menu.menus.RegionCreation;
 import org.juicemans.enchantedregions.menu.menus.RegionManagement;
+import org.juicemans.enchantedregions.menu.menus.WarpKeyCrafting;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -116,6 +117,7 @@ public class MenuHandler {
         loadMenu(RegionCreation.class);
         loadMenu(RegionManagement.class);
         loadMenu(NameRegion.class);
+        //loadMenu(WarpKeyCrafting.class);
     }
 
     private void loadMenu(Class<? extends Menu> m){

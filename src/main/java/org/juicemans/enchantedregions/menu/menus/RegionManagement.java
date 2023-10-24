@@ -3,19 +3,22 @@ package org.juicemans.enchantedregions.menu.menus;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.components.GuiType;
+import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.juicemans.enchantedregions.EnchantedRegionManager;
 import org.juicemans.enchantedregions.beans.EnchantedRegion;
 import org.juicemans.enchantedregions.menu.Menu;
 import org.juicemans.enchantedregions.menu.MenuInfo;
 import org.juicemans.enchantedregions.menu.MenuInteraction;
-import org.juicemans.enchantedregions.menu.menuitems.CancelAction;
-import org.juicemans.enchantedregions.menu.menuitems.DeleteRegion;
-import org.juicemans.enchantedregions.menu.menuitems.RegionInfo;
-import org.juicemans.enchantedregions.menu.menuitems.SetWarp;
+import org.juicemans.enchantedregions.menu.MenuItem;
+import org.juicemans.enchantedregions.menu.menuitems.*;
+
+import java.util.ArrayList;
 
 @MenuInfo(
         name = "regionManagement",
@@ -53,9 +56,11 @@ public class RegionManagement extends Menu {
     @Override
     protected void loadMenuItems() {
         loadMenuItem(RegionInfo.class, 0);
-        loadMenuItem(SetWarp.class, 5);
+        loadMenuItem(SetWarp.class, 4);
+        loadMenuItem(CreateWarpKey.class, 5);
 
         loadMenuItem(DeleteRegion.class, 22);
         loadMenuItem(CancelAction.class, 8);
     }
+
 }
