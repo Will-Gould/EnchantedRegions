@@ -4,6 +4,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import dev.triumphteam.gui.components.GuiType;
+import dev.triumphteam.gui.guis.GuiItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -11,10 +12,7 @@ import org.bukkit.entity.Player;
 import org.juicemans.enchantedregions.EnchantedRegionManager;
 import org.juicemans.enchantedregions.EnchantedRegions;
 import org.juicemans.enchantedregions.beans.CreationPlayer;
-import org.juicemans.enchantedregions.menu.Menu;
-import org.juicemans.enchantedregions.menu.MenuHandler;
-import org.juicemans.enchantedregions.menu.MenuInfo;
-import org.juicemans.enchantedregions.menu.MenuInteraction;
+import org.juicemans.enchantedregions.menu.*;
 import org.juicemans.enchantedregions.menu.menuitems.*;
 
 @MenuInfo(
@@ -80,4 +78,5 @@ public class RegionCreation extends Menu {
         loadMenuItem(CancelAction.class, 8);
         loadMenuItem(CreateRegion.class, 13);
     }
+
 }

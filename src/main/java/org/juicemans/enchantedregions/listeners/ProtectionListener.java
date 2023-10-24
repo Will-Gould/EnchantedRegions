@@ -40,9 +40,19 @@ public class ProtectionListener implements Listener {
             return;
         }
 
-        if(ep.getEdit() == 5){
-            regionManager.getRegionEditSteps().step(regionManager, p, ep, event.getBlock().getLocation());
+        //Check this enchanting table region is the one being edited
+        if(!region.equals(ep.getRegion())){
+            event.setCancelled(true);
+            return;
         }
+
+        //Check that they are deleting the region
+        if(ep.getEdit() != 5){
+            event.setCancelled(true);
+            return;
+        }
+
+        regionManager.getRegionEditSteps().step(regionManager, p, ep, event.getBlock().getLocation());
 
     }
 
