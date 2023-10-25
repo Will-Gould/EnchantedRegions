@@ -1,18 +1,25 @@
 package org.juicemans.enchantedregions.listeners;
 
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
+import org.bukkit.entity.Allay;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.juicemans.enchantedregions.EnchantedRegionManager;
 import org.juicemans.enchantedregions.EnchantedRegions;
 import org.juicemans.enchantedregions.beans.CreationPlayer;
 import org.juicemans.enchantedregions.beans.EditPlayer;
+import org.juicemans.enchantedregions.beans.EnchantedRegion;
+
+import java.util.UUID;
 
 public class PlayerListener implements Listener {
 
@@ -106,4 +113,84 @@ public class PlayerListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void warpKey(PlayerInteractEvent event){
+        Player p = event.getPlayer();
+
+        if(p.getInventory().getItemInMainHand().getType() != Material.AMETHYST_SHARD){
+            return;
+        }
+
+        if(event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK){
+            return;
+        }
+
+        if(
+                event.getMaterial().equals(Material.BREWING_STAND) ||
+                event.getMaterial().equals(Material.STONECUTTER) ||
+                Tag.BEDS.isTagged(event.getMaterial()) ||
+                event.getMaterial().equals(Material.LOOM) ||
+                event.getMaterial().equals(Material.SMITHING_TABLE) ||
+                event.getMaterial().equals(Material.ARMOR_STAND) ||
+                event.getMaterial().equals(Material.CARTOGRAPHY_TABLE) ||
+                event.getMaterial().equals(Material.FLETCHING_TABLE) ||
+                event.getMaterial().equals(Material.GRINDSTONE) ||
+                Tag.BUTTONS.isTagged(event.getMaterial()) ||
+                Tag.WOODEN_DOORS.isTagged(event.getMaterial()) ||
+                Tag.WOODEN_TRAPDOORS.isTagged(event.getMaterial()) ||
+                Tag.FENCE_GATES.isTagged(event.getMaterial()) ||
+                Tag.ITEMS_BOATS.isTagged(event.getMaterial()) ||
+                Tag.SHULKER_BOXES.isTagged(event.getMaterial()) ||
+                event.getMaterial().equals(Material.CHEST) ||
+                event.getMaterial().equals(Material.MINECART) ||
+                event.getMaterial().equals(Material.ENDER_CHEST) ||
+                event.getMaterial().equals(Material.TRAPPED_CHEST) ||
+                event.getMaterial().equals(Material.CHEST_MINECART) ||
+                event.getMaterial().equals(Material.HOPPER_MINECART) ||
+                event.getMaterial().equals(Material.FURNACE_MINECART) ||
+                event.getMaterial().equals(Material.TNT_MINECART) ||
+                event.getMaterial().equals(Material.ENCHANTING_TABLE) ||
+                event.getMaterial().equals(Material.CRAFTING_TABLE) ||
+                event.getMaterial().equals(Material.BARREL) ||
+                event.getMaterial().equals(Material.FURNACE) ||
+                event.getMaterial().equals(Material.BLAST_FURNACE) ||
+                event.getMaterial().equals(Material.LECTERN) ||
+                event.getMaterial().equals(Material.SMOKER)
+        ){
+            return;
+        }
+
+        ItemMeta meta = p.getInventory().getItemInMainHand().getItemMeta();
+        NamespacedKey key = new NamespacedKey(this.plugin, "region-id");
+        if(!meta.getPersistentDataContainer().has(key)){
+            return;
+        }
+        String id = meta.getPersistentDataContainer().get(key, PersistentDataType.STRING);
+        if(id == null){
+            return;
+        }
+        EnchantedRegion r = regionManager.getEnchantedRegion(UUID.fromString(id));
+        if(r == null){
+            return;
+        }
+
+        r.warp(plugin, p);
+    }
+
+    @EventHandler
+    public void portalKeyProtection(PlayerInteractEntityEvent event){
+
+        if(event.getPlayer().getInventory().getItemInMainHand().isEmpty()){
+            return;
+        }
+
+        if(event.getPlayer().getInventory().getItemInMainHand().getType() == Material.AMETHYST_SHARD){
+            if(event.getRightClicked() instanceof Allay){
+                if(event.getPlayer().getInventory().getItemInMainHand().getItemMeta().getPersistentDataContainer().has(new NamespacedKey(this.plugin, "region-id"))){
+                    event.setCancelled(true);
+                }
+            }
+        }
+
+    }
 }
