@@ -36,7 +36,7 @@ public class NameAndCreate implements MenuItem {
         }
 
         //TODO adjust to price
-        if(cp.getPaid() != Util.getVolume(cp.getCornerOne(), cp.getCornerTwo())){
+        if(cp.getPaid() != cp.calculatePrice()){
             return getDisabledItem(regionManager, player, cp, table, "Payment not complete");
         }
 

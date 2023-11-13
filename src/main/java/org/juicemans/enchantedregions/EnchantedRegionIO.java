@@ -107,8 +107,12 @@ public class EnchantedRegionIO {
         String name = flat.getString(node + "name");
         Location enchantingTable = new Location(w, flat.getInt(node + "enchantingtable.x"), flat.getInt(node + "enchantingtable.y"), flat.getInt(node + "enchantingtable.z"));
         int diamonds = flat.getInt(node + "diamonds");
-
         EnchantedRegion region = new EnchantedRegion(id, name, w, enchantingTable, diamonds, wgRegion);
+
+        if(flat.isConfigurationSection(node + "lodestone")){
+            region.setLodestone(new Location(w, flat.getInt(node + "lodestone.x"), flat.getInt(node + "lodestone.y"), flat.getInt(node + "lodestone.z")));
+        }
+
         this.plugin.getRegionManager().addEnchantedRegion(id, region);
     }
 

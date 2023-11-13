@@ -118,8 +118,19 @@ public class CreationPlayer {
         this.payment += payment;
     }
 
+    public void setPayment(int payment){
+        this.payment = payment;
+    }
+
     public int getPaid(){
         return this.payment;
+    }
+
+    public void refundDiamonds(){
+        if(this.payment > 0){
+            player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.DIAMOND, this.payment));
+        }
+        this.payment = 0;
     }
 
     public int calculatePrice(){
@@ -127,9 +138,7 @@ public class CreationPlayer {
             return 0;
         }
 
-        //TODO create formula for price calculation
-        //Calculate volume
         int v = Util.getVolume(l1, l2);
-        return v;
+        return Util.calculatePrice(v);
     }
 }

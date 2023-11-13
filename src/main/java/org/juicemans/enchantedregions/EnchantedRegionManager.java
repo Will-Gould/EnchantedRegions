@@ -50,6 +50,12 @@ public class EnchantedRegionManager {
     }
 
     public void removeCreationPlayer(Player p){
+        CreationPlayer cp = this.getCreationPlayer(p.getUniqueId());
+        //Refund if creation was cancelled
+        if(!this.enchantedRegions.containsKey(cp.getRegionId())){
+            cp.refundDiamonds();
+        }
+        cp.cancelTimeoutTask();
         this.creationPlayers.remove(p.getUniqueId());
     }
 
@@ -66,6 +72,8 @@ public class EnchantedRegionManager {
     }
 
     public void removeEditPlayer(Player p){
+        EditPlayer ep = this.editPlayers.get(p.getUniqueId());
+        ep.cancelTimeoutTask();
         this.editPlayers.remove(p.getUniqueId());
     }
 
@@ -150,18 +158,6 @@ public class EnchantedRegionManager {
                 continue;
             }
             if(r.getEnchantingTable().distance(l) == 0){
-                return r;
-            }
-        }
-        return null;
-    }
-
-    public EnchantedRegion getRegionFromLodestone(Location l){
-        for(EnchantedRegion r : this.enchantedRegions.values()){
-            if(!r.getLodestone().getWorld().equals(l.getWorld())){
-                continue;
-            }
-            if(r.getLodestone().distance(l) == 0){
                 return r;
             }
         }

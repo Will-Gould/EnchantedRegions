@@ -141,4 +141,18 @@ public class Util {
         return count;
     }
 
+    public static int calculatePrice(int volume){
+        if(volume <= 64){
+            return 1;
+        }
+        double price;
+        if(volume <= 163840){
+            return (int) Math.round(((double) 64 /163840)*volume + 1);
+        }else{
+            price = (64/Math.pow(Math.pow(9, (double) 1/1146880), 163840)) * (Math.pow(Math.pow(9, (double) 1/1146880), volume));
+        }
+
+        return (int) Math.round(price);
+    }
+
 }

@@ -63,8 +63,7 @@ public class NameRegion extends Menu {
             return false;
         }
 
-        //TODO change to calculated price
-        if(cp.getPaid() != Util.getVolume(cp.getCornerOne(), cp.getCornerTwo())){
+        if(cp.getPaid() != cp.calculatePrice()){
             return false;
         }
 
@@ -117,8 +116,8 @@ public class NameRegion extends Menu {
                                             wgRegion
                                     );
                                     regionManager.addEnchantedRegion(cp.getRegionId(), r);
+                                    //Must add region before removing creation player
                                     wgRegionManager.addRegion(wgRegion);
-                                    cp.cancelTimeoutTask();
                                     regionManager.removeCreationPlayer(player);
                                     regionManager.getPlugin().getIO().saveRegions();
                                 })

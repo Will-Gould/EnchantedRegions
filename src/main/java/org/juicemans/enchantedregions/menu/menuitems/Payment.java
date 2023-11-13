@@ -33,7 +33,7 @@ public class Payment implements MenuItem {
         }
 
         //Check if they have paid
-        if(cp.getPaid() == Util.getVolume(cp.getCornerOne(), cp.getCornerTwo())){
+        if(cp.getPaid() == cp.calculatePrice()){
             return getDisabledItem(regionManager, player, cp, table, "Payment complete");
         }
 
@@ -61,7 +61,7 @@ public class Payment implements MenuItem {
         CreationPlayer cp = rm.getCreationPlayer(p.getUniqueId());
 
         //Check if they have already paid
-        if(cp.getPaid() == Util.getVolume(cp.getCornerOne(), cp.getCornerTwo())){
+        if(cp.getPaid() == cp.calculatePrice()){
             return;
         }
 
@@ -111,7 +111,7 @@ public class Payment implements MenuItem {
 
         if(cp.getCornerOne() != null && cp.getCornerTwo() != null){
             lore.add(Component.text("Price: ", NamedTextColor.BLUE)
-                    .append(Component.text(Util.getVolume(cp.getCornerOne(), cp.getCornerTwo()), NamedTextColor.LIGHT_PURPLE))
+                    .append(Component.text(cp.calculatePrice(), NamedTextColor.LIGHT_PURPLE))
                     .append(Component.text(" Diamonds", NamedTextColor.BLUE))
             );
         }

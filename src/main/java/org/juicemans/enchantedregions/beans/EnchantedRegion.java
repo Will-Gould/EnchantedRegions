@@ -84,6 +84,10 @@ public class EnchantedRegion {
         return region.volume();
     }
 
+    public int getPrice(){
+        return Util.calculatePrice(getVolume());
+    }
+
     public void warp(EnchantedRegions plugin, Player p){
         //Check if lodestone not null and still exists in world
         if(this.lodestone == null){

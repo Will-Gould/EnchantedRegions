@@ -1,6 +1,5 @@
 package org.juicemans.enchantedregions.menu.menuitems;
 
-import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -47,11 +46,6 @@ public class CancelAction implements MenuItem {
 
         //Cancel creation
         if(cp != null){
-            //Refund any payment
-            if(cp.getPaid() > 0){
-                p.getWorld().dropItem(p.getLocation(), new ItemStack(Material.DIAMOND, cp.getPaid()));
-            }
-
             rm.removeCreationPlayer(p);
         }
 

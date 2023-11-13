@@ -51,19 +51,14 @@ public class RegionEditSteps {
 
         p.sendMessage("Region Lodestone warp saved");
         ep.getRegion().setLodestone(l);
-        ep.removeTimeoutTask();
         rm.removeEditPlayer(p);
         rm.getPlugin().getIO().saveRegions();
     }
 
     private void deleteRegion(EnchantedRegionManager rm, Player p, EditPlayer ep, Location l) {
-        //Refund payment
-        if(ep.getRegion().getDiamonds() > 0){
-            p.getWorld().dropItem(p.getLocation(), new ItemStack(Material.DIAMOND, ep.getRegion().getDiamonds()));
-        }
         //Remove region and edit player
         rm.removeEnchantedRegion(ep.getRegion().getId());
-        ep.removeTimeoutTask();
+        ep.refundDiamonds();
         rm.removeEditPlayer(p);
         p.sendMessage(Component.text("Region has been removed", NamedTextColor.BLUE));
     }
